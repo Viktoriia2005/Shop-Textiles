@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ua">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="img/site.webmanifest">
+    <title>Moya.domivka_ua</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="Home_page.css">
+</head>
+
+<body>
+    <header class="container-fluid py-3 border-bottom">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-start">
+                <img src="img/Icon_Shop.png" alt="Логотип" width="135" height="135">
+            </div>
+            <div class="col-md-8 text-center">
+                <h1 class="mb-0">Moya.domivka_ua</h1>
+            </div>
+            <div class="col-md-2 text-end">
+                <div id="avatarLink" class="user-avatar-wrapper position-relative me-3">
+                    <img src="img/avatar.png" alt="Акаунт" id="avatarIcon" width="40">
+                    <div id="userNameRibbon" class="username-ribbon"></div>
+                </div>
+                <a href="Cart.html" class="me-3">
+                    <img src="img/cart.png" alt="Корзинка" width="40">
+                </a>
+            </div>
+        </div>
+    </header>
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <div class="container">
+            <ul class="navbar-nav mx-auto fs-5">
+                <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
+                        href="Delivery_and_payment.html">Доставка й оплата</a></li>
+                <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none" href="About.html">Про
+                        нас</a>
+                </li>
+                <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
+                        href="Contact.html">Контакти</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="d-flex justify-content-end position-relative">
+        <form id="searchForm" class="search-box d-flex my-3 w-100" role="search">
+            <div class="w-100 position-relative">
+                <input id="searchInput" class="form-control me-2" type="search" name="query"
+                    placeholder="Пошук товару..." aria-label="Search" required>
+                <div id="searchHints" class="list-group position-absolute w-100"></div>
+            </div>
+            <button class="btn btn-custom" type="submit">Знайти</button>
+        </form>
+    </div>
+    <div id="searchFeedback" class="mt-2 text-end"></div>
+    <div id="searchResults" class="row mt-3"></div>
+    <main class="container-fluid mt-0">
+        <div class="row">
+            <aside class="col-md-3 pt-3">
+                <h5 class="ps-3" style="font-weight: bold; font-style: italic;">Каталог</h5>
+                <ul class="list-unstyled ps-3">
+                    <li><a href="Blankets.html" class="text-dark text-decoration-none">Ковдри</a></li>
+                    <li><a href="Pillows.html" class="text-dark text-decoration-none">Подушки</a></li>
+                    <li><a href="Veil.html" class="text-dark text-decoration-none">Покривала</a></li>
+                    <li><a href="Linens.html" class="text-dark text-decoration-none">Постільна білизна</a></li>
+                    <li><a href="Sauna_towels.html" class="text-dark text-decoration-none">Рушники (баня)</a></li>
+                    <li><a href="Kitchen_towels.html" class="text-dark text-decoration-none">Рушники (кухня)</a></li>
+                    <li><a href="Tablecloths.html" class="text-dark text-decoration-none">Скатертини</a></li>
+                    <li><a href="Dressing_gowns.html" class="text-dark text-decoration-none">Халати</a></li>
+                </ul>
+            </aside>
+            <section class="col-md-9">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4" id="product-list">
+                    <!-- Товари будуть вставлятися сюди через JS -->
+                </div>
+            </section>
+    </main>
+    <footer class="bg-dark text-dark py-3 mt-auto">
+        <div class="container text-center">
+            <p>&copy; 2025 Moya.domivka_ua. Усі права захищено.</p>
+            <div class="footer-links d-flex flex-column align-items-center">
+                <a href="Home_page.html" class="text-dark text-decoration-none mb-2">Головна</a>
+                <a href="Delivery_and_payment.html" class="text-dark text-decoration-none mb-2">Доставка й оплата</a>
+                <a href="About.html" class="text-dark text-decoration-none mb-2">Про нас</a>
+                <a href="Contact.html" class="text-dark text-decoration-none mb-2">Контакти</a>
+            </div>
+        </div>
+    </footer>
+    <script src="config.js"></script>
+    <script src="searchForm.js"></script>
+    <script src="Home_page_product.js"></script>
+</body>
+
+</html>

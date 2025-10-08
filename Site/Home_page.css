@@ -1,0 +1,195 @@
+html,
+body {
+  height: 100%;
+  font-family: "Shantell Sans", serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 4vw;
+  /* адаптивний заголовок */
+}
+
+main {
+  flex: 1;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.card-img-top {
+  height: 25vh;
+  /* висота зображення відносно вікна */
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-body {
+  flex-grow: 1;
+}
+
+.card:hover {
+  transform: translateY(-2%);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+aside {
+  font-size: 1.5vw;
+}
+
+aside ul li {
+  font-size: 1.5vw;
+}
+
+aside h5 {
+  font-size: 2.5vw;
+}
+
+.list-unstyled {
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.list-unstyled a:hover {
+  background-color: #cecece;
+  box-shadow: 0 0.4vw 0.8vw rgba(0, 0, 0, 0.2);
+}
+
+.no-border {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 1.4rem;
+  transition: transform 0.3s ease;
+  color: #dc3545;
+}
+
+.no-border.unliked {
+  color: #6c757d;
+}
+
+.pulse-heart {
+  animation: pulse 0.6s ease;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.like-toggle {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+header,
+nav,
+footer {
+  background-image: linear-gradient(to bottom left, #DEB887, #A0522D);
+  color: black;
+}
+
+nav {
+  margin-bottom: 2%;
+}
+
+.navbar-nav {
+  display: flex;
+  gap: 8rem;
+}
+
+.navbar-nav .nav-link {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 0.5vw 1vw;
+  border-radius: 0.6vw;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: #f3d0a3;
+  color: black;
+  box-shadow: 0 0.4vw 0.8vw rgba(0, 0, 0, 0.2);
+}
+
+footer {
+  margin-top: 3%;
+  padding-top: 2%;
+}
+
+.btn-custom {
+  background-color: #a0522d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1.2vw;
+  font-size: 1.2vw;
+  transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: #e9955a;
+}
+
+.search-box {
+  width: 100%;
+  max-width: 50%;
+}
+
+#searchHints {
+  z-index: 1000;
+  top: 100%;
+  left: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.user-avatar-wrapper {
+  display: inline-block;
+  position: relative;
+  margin-right: 1rem;
+  vertical-align: middle;
+}
+
+.username-ribbon {
+  position: absolute;
+  top: 50%;
+  right: -160px;
+  /* зміщення вліво */
+  transform: translateY(-50%);
+  background-color: #ffffff;
+  color: #834906;
+  padding: 6px 12px;
+  border-radius: 8px 0 0 8px;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 6px rgba(61, 59, 59, 0.534);
+  transition: right 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+}
+
+.user-avatar-wrapper:hover .username-ribbon {
+  right: 50px;
+  /* позиція при наведенні */
+  opacity: 1;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ua">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="manifest" href="img/site.webmanifest">
+  <title>Мої замовлення</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="my_order.css">
+</head>
+
+<body>
+  <header class="container-fluid py-3 border-bottom">
+    <div class="row align-items-center">
+      <div class="col-md-2 text-start">
+        <img src="img/Icon_Shop.png" alt="Логотип" width="135" height="135">
+      </div>
+      <div class="col-md-8 text-center">
+        <h1 class="mb-0">Мої замовлення</h1>
+      </div>
+      <div class="col-md-2 text-end">
+        <a href="Cart.html" class="me-3" id="cart-icon">
+          <img src="img/cart.png" alt="Корзинка" width="40">
+        </a>
+      </div>
+    </div>
+  </header>
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="container">
+      <ul class="navbar-nav mx-auto fs-5">
+        <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none" href="Home_page.html">Головна</a>
+        </li>
+        <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
+            href="Delivery_and_payment.html">Доставка й оплата</a></li>
+        <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none" href="About.html">Про
+            нас</a>
+        </li>
+        <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none" href="Contact.html">Контакти</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <main class="container my-5">
+    <ul class="nav nav-tabs" id="orderTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="active-tab" data-bs-toggle="tab" data-bs-target="#active" type="button"
+          role="tab">Активні</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="archive-tab" data-bs-toggle="tab" data-bs-target="#archive" type="button"
+          role="tab">Архів</button>
+      </li>
+    </ul>
+
+    <div class="tab-content mt-4" id="orderTabsContent">
+      <div class="tab-pane fade show active" id="active" role="tabpanel">
+        <div id="activeOrders" class="row gy-4"></div>
+        <p id="noActiveOrders" class="text-muted text-center d-none">Немає активних замовлень</p>
+      </div>
+      <div class="tab-pane fade" id="archive" role="tabpanel">
+        <div id="archivedOrders" class="row gy-4"></div>
+        <p id="noArchivedOrders" class="text-muted text-center d-none">Архів порожній</p>
+      </div>
+    </div>
+  </main>
+  <script src="config.js"></script>
+  <script src="my_order.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
