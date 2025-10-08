@@ -9,12 +9,62 @@ document.addEventListener("DOMContentLoaded", async () => {
   const cartContainer = document.getElementById("cart-items");
   const totalDisplay = document.querySelectorAll("#cart-total, #cart-total-final");
   const checkoutBtn = document.getElementById("checkout-btn");
+  const cartSummary = document.getElementById('cart-summary');
 
   // 🔄 Автоматичне оновлення кошика
   setInterval(loadCart, 3000);
 
   // 🔹 Завантажити кошик при старті
   await loadCart();
+  // Якщо кошик порожній після першого load — приховаємо підсумок і кнопку
+  const initialRows = document.querySelectorAll('.cart-item');
+  if (!initialRows || initialRows.length === 0) {
+    if (cartSummary) cartSummary.style.display = 'none';
+    if (checkoutBtn) checkoutBtn.style.display = 'none';
+  }
+  // --- Подія на контейнері (делегація) та на кнопку оформлення реєструються ОДИН РАЗ
+  // Використовуємо делегацію, щоб не підписуватись на кожен елемент при кожному завантаженні
+  cartContainer.addEventListener("click", async (e) => {
+    const btn = e.target.closest('.remove-btn');
+    if (!btn) return;
+    e.preventDefault();
+    const productId = btn.dataset.id;
+
+    try {
+      await fetch(`http://localhost:5000/cart/${userId}/${productId}`, { method: "DELETE" });
+      const itemRow = btn.closest('.cart-item');
+      if (itemRow) itemRow.remove();
+      updateTotal();
+    } catch (err) {
+      console.error('Помилка при видаленні товару:', err);
+      alert('Не вдалося видалити товар');
+    }
+  });
+
+  cartContainer.addEventListener('change', async (e) => {
+    const input = e.target;
+    if (!input.classList.contains('item-qty')) return;
+    const productId = input.dataset.id;
+    const newQty = parseInt(input.value);
+
+    try {
+      const res = await fetch(`http://localhost:5000/cart/${userId}/${productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity: newQty })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        updateTotal();
+      } else {
+        alert("Помилка: " + data.error);
+      }
+    } catch (err) {
+      console.error('Помилка при оновленні кількості:', err);
+      alert('Не вдалося оновити кількість');
+    }
+  });
 
   async function loadCart() {
     try {
@@ -23,6 +73,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!Array.isArray(items) || items.length === 0 || items.empty) {
         showEmptyCart(items.message);
+        if (cartSummary) cartSummary.style.display = 'none';
+        if (checkoutBtn) checkoutBtn.style.display = 'none';
         return;
       }
 
@@ -54,87 +106,67 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       totalDisplay.forEach(el => el.textContent = total + " грн");
-      attachListeners();
+      // Показуємо підсумок і кнопку, якщо є товари
+      if (cartSummary) cartSummary.style.display = '';
+      if (checkoutBtn) checkoutBtn.style.display = '';
     } catch (error) {
       console.error("❌ Помилка завантаження кошика:", error);
       showEmptyCart("Не вдалося завантажити товари");
+      if (cartSummary) cartSummary.style.display = 'none';
+      if (checkoutBtn) checkoutBtn.style.display = 'none';
     }
   }
+  // Реєструємо обробник оформлення замовлення ОДИН РАЗ
+  checkoutBtn.addEventListener("click", async () => {
+    const orderItems = [];
 
-  function attachListeners() {
-    document.querySelectorAll(".item-qty").forEach(input => {
-      input.addEventListener("change", async () => {
-        const productId = input.dataset.id;
-        const newQty = parseInt(input.value);
-
-        const res = await fetch(`http://localhost:5000/cart/${userId}/${productId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ quantity: newQty })
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          updateTotal();
-        } else {
-          alert("Помилка: " + data.error);
-        }
-      });
+    document.querySelectorAll(".cart-item").forEach(row => {
+      const productId = row.querySelector(".remove-btn").dataset.id;
+      const quantity = parseInt(row.querySelector(".item-qty").value);
+      orderItems.push({ product_id: productId, quantity });
     });
 
-    document.querySelectorAll(".remove-btn").forEach(btn => {
-      btn.addEventListener("click", async function (e) {
-        e.preventDefault();
-        const productId = btn.dataset.id;
+    if (orderItems.length === 0) {
+      alert("Кошик порожній");
+      return;
+    }
 
-        await fetch(`http://localhost:5000/cart/${userId}/${productId}`, {
-          method: "DELETE"
-        });
+    try {
+        // Блокуємо кнопку, щоб уникнути подвійного кліку
+        checkoutBtn.disabled = true;
 
-        btn.closest(".cart-item").remove();
-        updateTotal();
-      });
-    });
-
-    checkoutBtn.addEventListener("click", async () => {
-      const orderItems = [];
-
-      document.querySelectorAll(".cart-item").forEach(row => {
-        const productId = row.querySelector(".remove-btn").dataset.id;
-        const quantity = parseInt(row.querySelector(".item-qty").value);
-        orderItems.push({ product_id: productId, quantity });
-      });
-
-      if (orderItems.length === 0) {
-        alert("Кошик порожній");
-        return;
-      }
-
-      try {
         const res = await fetch("http://localhost:5000/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: userId, items: orderItems })
-        });
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId, items: orderItems })
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (res.ok) {
-          // ❌ НЕ очищаємо кошик у БД
-          // ✅ Очищаємо інтерфейс
-          cartContainer.innerHTML = "";
-          totalDisplay.forEach(el => el.textContent = "0 грн");
-          alert("Замовлення оформлено!");
-          window.location.href = "my_order.html";
-        } else {
-          alert("Помилка: " + data.error);
+      if (res.ok) {
+        // Спробуємо очистити кошик на сервері (якщо бекенд підтримує)
+        try {
+          await fetch(`http://localhost:5000/cart/${userId}`, { method: 'DELETE' });
+        } catch (clearErr) {
+          console.warn('Не вдалося очистити кошик на сервері:', clearErr);
+          // не перериваємо процес оформлення — користувач вже оформив замовлення
         }
-      } catch (error) {
-        console.error("❌ Помилка оформлення:", error);
-        alert("Не вдалося оформити замовлення");
+
+        // Оновлюємо інтерфейс
+        cartContainer.innerHTML = "";
+        totalDisplay.forEach(el => el.textContent = "0 грн");
+        alert("Замовлення оформлено!");
+        // Перенаправляємо користувача до сторінки з його замовленнями
+        window.location.href = "my_order.html";
+      } else {
+        alert("Помилка: " + data.error);
       }
-    });
-  }
+      } catch (error) {
+      console.error("❌ Помилка оформлення:", error);
+      alert("Не вдалося оформити замовлення");
+      checkoutBtn.disabled = false;
+    }
+  });
 
   function updateTotal() {
     let total = 0;
@@ -157,6 +189,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (rows.length === 0) {
       showEmptyCart("Ваш кошик пустий");
+      if (cartSummary) cartSummary.style.display = 'none';
+      if (checkoutBtn) checkoutBtn.style.display = 'none';
     }
   }
 
@@ -169,5 +203,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
     `;
     totalDisplay.forEach(el => el.textContent = "0 грн");
+    if (cartSummary) cartSummary.style.display = 'none';
+    if (checkoutBtn) checkoutBtn.style.display = 'none';
   }
 });

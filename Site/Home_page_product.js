@@ -100,7 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (user && typeof user.user_id === "number") {
       window.location.href = "account.html";
     } else {
-      window.location.href = "login.html";
+      // Якщо користувач не в системі — направляємо на сторінку реєстрації
+      window.location.href = "register.html";
     }
   });
 

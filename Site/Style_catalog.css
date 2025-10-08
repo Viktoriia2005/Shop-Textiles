@@ -190,3 +190,21 @@ footer {
     width: 100%;
     max-width: 50%;
 }
+
+/* Make the search input and button align and have the same height */
+.search-box .form-control,
+.search-box .btn {
+    height: 3.2rem; /* fixed height for consistent alignment */
+    line-height: 1;
+}
+
+.search-box .form-control {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.search-box .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}

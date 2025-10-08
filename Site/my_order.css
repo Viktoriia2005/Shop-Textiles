@@ -101,3 +101,7 @@ footer {
 .btn-custom:hover {
   background-color: #e9955a;
 }
+
+.card-text{
+  color: #a0522d;
+}
