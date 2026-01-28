@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="card-body text-center">
             <h5 class="card-title">${product.Name}</h5>
             <p class="card-price text-black fw-bold mb-1">₴ ${product.Price}</p>
-            <div class="mb-2">
-              <span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+            <div class="mb-2 d-flex align-items-center justify-content-center gap-2">
+              <div class="rating-stars">${(function (r) { const R = parseFloat(String(r).replace(',', '.')) || 0; let o = ''; for (let i = 1; i <= 5; i++) { if (R >= i) o += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z"/></svg>`; else if (R >= i - 0.5) o += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="hgS${i}" x1="0" x2="1"><stop offset="50%" stop-color="#FFC107"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z" fill="url(#hgS${i})" stroke="#FFC107"/></svg>`; else o += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFC107" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z"/></svg>`; } return o; })(product.Rating)}</div>
               <small class="text-muted">(${product.Rating})</small>
             </div>
           </div>
@@ -38,36 +38,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // 🔐 Кнопка “Купити”
-    document.querySelectorAll(".buy-btn").forEach(button => {
-      button.addEventListener("click", async () => {
-        const user = JSON.parse(localStorage.getItem("user"));
+    document.querySelectorAll('.buy-btn').forEach(button => {
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
 
-        if (!user || !user.user_id) {
-          window.location.href = "login.html";
-          return;
-        }
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.user_id) return window.location.href = 'login.html';
 
-        const productId = button.getAttribute("data-product-id");
-
+        const productId = button.getAttribute('data-product-id');
         try {
-          const res = await fetch("http://localhost:5000/cart/quick-add", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              user_id: user.user_id,
-              product_id: Number(productId)
-            })
+          button.disabled = true;
+          const res = await fetch('http://localhost:5000/cart/quick-add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: user.user_id, product_id: Number(productId) })
           });
-
           const data = await res.json();
-          if (res.ok) {
-            alert(data.message || "Товар додано до кошика!");
-          } else {
-            alert("Помилка: " + data.error);
-          }
-        } catch (error) {
-          console.error("❌ Помилка додавання:", error);
-          alert("Не вдалося додати товар");
+          if (res.ok) { showPopup(data.message || 'Товар додано до кошика!'); setTimeout(() => { button.disabled = false; }, 500); } else { showPopup(data.error || 'Помилка'); button.disabled = false; }
+        } catch (err) {
+          console.error('❌ Помилка додавання:', err);
+          showPopup('Не вдалося додати товар');
+          button.disabled = false;
         }
       });
     });
@@ -77,3 +68,59 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = `<p class="text-center text-danger">Не вдалося завантажити товари</p>`;
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const avatarLink = document.getElementById("avatarLink");
+  const ribbon = document.getElementById("userNameRibbon");
+
+  if (!avatarLink || !ribbon) return;
+
+  avatarLink.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const rawUser = localStorage.getItem("user");
+    let user = null;
+
+    try {
+      user = JSON.parse(rawUser);
+    } catch (err) {
+      console.warn("⚠️ Некоректний user у localStorage");
+    }
+
+    if (user && typeof user.user_id === "number") {
+      window.location.href = "account.html";
+    } else {
+      // Якщо користувач не в системі — направляємо на сторінку реєстрації
+      window.location.href = "register.html";
+    }
+  });
+
+  const rawUser = localStorage.getItem("user");
+  let user = null;
+
+  try {
+    user = JSON.parse(rawUser);
+  } catch (err) {
+    console.warn("⚠️ Некоректний user у localStorage");
+  }
+
+  if (user && user.name) {
+    ribbon.textContent = `Привіт, ${user.name}!`;
+  } else {
+    ribbon.style.display = "none";
+  }
+});
+
+function showPopup(message, duration = 2000) {
+  const popup = document.getElementById('popup-message');
+  popup.textContent = message;
+  popup.style.display = 'block';
+  popup.style.opacity = '1';
+
+  setTimeout(() => {
+    popup.style.opacity = '0';
+    setTimeout(() => {
+      popup.style.display = 'none';
+    }, 300);
+  }, duration);
+}

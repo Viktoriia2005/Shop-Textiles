@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
     // 🧾 Створити замовлення
     const [orderResult] = await db.execute(
       'INSERT INTO orders (user_id, order_date, status) VALUES (?, NOW(), ?)',
-      [user_id, 'active']
+      [user_id, 'pending']
     );
     const order_id = orderResult.insertId;
 
@@ -64,37 +64,6 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Помилка оформлення замовлення' });
   }
 });
-
-
-// router.get('/user/:id/full', async (req, res) => {
-//   const userId = req.params.id;
-
-//   try {
-//     const [orders] = await db.execute(
-//       'SELECT order_id, order_date, status FROM orders WHERE user_id = ? ORDER BY order_date DESC',
-//       [userId]
-//     );
-
-//     const fullOrders = [];
-
-//     for (const order of orders) {
-//       const [items] = await db.execute(`
-//         SELECT oi.quantity, p.name
-//         FROM order_items oi
-//         JOIN products p ON oi.product_id = p.product_id
-//         WHERE oi.order_id = ?
-//       `, [order.order_id]);
-
-//       fullOrders.push({ ...order, items });
-//     }
-
-//     res.json(fullOrders);
-//   } catch (error) {
-//     console.error('❌ Помилка отримання замовлень:', error);
-//     res.status(500).json({ error: 'Не вдалося отримати замовлення' });
-//   }
-// });
-
 
 router.get('/user/:id/full', async (req, res) => {
   const userId = req.params.id;

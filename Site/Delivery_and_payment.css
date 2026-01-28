@@ -37,15 +37,15 @@ nav {
 }
 
 .navbar-nav .nav-link {
-  transition: background-color 0.3s ease, color 0.3s ease;
-  padding: 0.5vw 1vw;
-  border-radius: 0.6vw;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 0.5vw 1vw;
+    border-radius: 0.6vw;
 }
 
 .navbar-nav .nav-link:hover {
-  background-color: #f3d0a3;
-  color: black;
-  box-shadow: 0 0.4vw 0.8vw rgba(0, 0, 0, 0.2);
+    background-color: #f3d0a3;
+    color: black;
+    box-shadow: 0 0.4vw 0.8vw rgba(0, 0, 0, 0.2);
 }
 
 footer {

@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// 🔎 Підказки для пошуку (тільки назви товарів)
+
 router.get('/hints', async (req, res) => {
     const { hint } = req.query;
 

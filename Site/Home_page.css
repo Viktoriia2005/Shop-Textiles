@@ -62,7 +62,8 @@ aside h5 {
 }
 
 .list-unstyled a:hover {
-  background-color: #cecece;
+  background-color: #f3d0a3;
+  color: black;
   box-shadow: 0 0.4vw 0.8vw rgba(0, 0, 0, 0.2);
 }
 
@@ -215,4 +216,22 @@ footer {
   transform: translate(-110%, -50%);
   /* виїжджає трохи далі вліво */
   opacity: 1;
+}
+
+#popup-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f3d0a3;
+  color: #000000;
+  padding: 2% 4%;
+  border-radius: 1.5em;
+  box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+  z-index: 9999;
+  text-align: center;
+  max-width: 80vw;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }

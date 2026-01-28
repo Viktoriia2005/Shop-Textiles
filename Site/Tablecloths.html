@@ -28,8 +28,10 @@
                 <h1 class="mb-0">Скатертини</h1>
             </div>
             <div class="col-md-2 text-end">
-                <a href="register.html" class="me-3">
-                    <img src="img/avatar.png" alt="Регістрація" width="40"></a>
+                <div id="avatarLink" class="user-avatar-wrapper position-relative me-3">
+                    <img src="img/avatar.png" alt="Акаунт" id="avatarIcon" width="40">
+                    <div id="userNameRibbon" class="username-ribbon"></div>
+                </div>
                 <a href="Cart.html" class="me-3" id="cart-icon">
                     <img src="img/cart.png" alt="Корзинка" width="40">
                 </a>
@@ -105,6 +107,7 @@
     <script src="config.js"></script>
     <script src="Tablecloths_category.js"></script>
     <script src="searchForm.js"></script>
+    <div id="popup-message" style="display: none;"></div>
 </body>
 
 </html>

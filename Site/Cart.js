@@ -132,10 +132,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-        // Блокуємо кнопку, щоб уникнути подвійного кліку
-        checkoutBtn.disabled = true;
+      // Блокуємо кнопку, щоб уникнути подвійного кліку
+      checkoutBtn.disabled = true;
 
-        const res = await fetch("http://localhost:5000/orders", {
+      const res = await fetch("http://localhost:5000/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: userId, items: orderItems })
@@ -155,13 +155,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Оновлюємо інтерфейс
         cartContainer.innerHTML = "";
         totalDisplay.forEach(el => el.textContent = "0 грн");
-        alert("Замовлення оформлено!");
-        // Перенаправляємо користувача до сторінки з його замовленнями
-        window.location.href = "my_order.html";
+        showPopup("Замовлення оформлено!");
+        setTimeout(() => {
+          window.location.href = "my_order.html";
+        }, 2000);
       } else {
         alert("Помилка: " + data.error);
       }
-      } catch (error) {
+    } catch (error) {
       console.error("❌ Помилка оформлення:", error);
       alert("Не вдалося оформити замовлення");
       checkoutBtn.disabled = false;
@@ -207,3 +208,59 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (checkoutBtn) checkoutBtn.style.display = 'none';
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const avatarLink = document.getElementById("avatarLink");
+  const ribbon = document.getElementById("userNameRibbon");
+
+  if (!avatarLink || !ribbon) return;
+
+  avatarLink.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const rawUser = localStorage.getItem("user");
+    let user = null;
+
+    try {
+      user = JSON.parse(rawUser);
+    } catch (err) {
+      console.warn("⚠️ Некоректний user у localStorage");
+    }
+
+    if (user && typeof user.user_id === "number") {
+      window.location.href = "account.html";
+    } else {
+      // Якщо користувач не в системі — направляємо на сторінку реєстрації
+      window.location.href = "register.html";
+    }
+  });
+
+  const rawUser = localStorage.getItem("user");
+  let user = null;
+
+  try {
+    user = JSON.parse(rawUser);
+  } catch (err) {
+    console.warn("⚠️ Некоректний user у localStorage");
+  }
+
+  if (user && user.name) {
+    ribbon.textContent = `Привіт, ${user.name}!`;
+  } else {
+    ribbon.style.display = "none";
+  }
+});
+
+function showPopup(message, duration = 2000) {
+  const popup = document.getElementById('popup-message');
+  popup.textContent = message;
+  popup.style.display = 'block';
+  popup.style.opacity = '1';
+
+  setTimeout(() => {
+    popup.style.opacity = '0';
+    setTimeout(() => {
+      popup.style.display = 'none';
+    }, 300);
+  }, duration);
+}

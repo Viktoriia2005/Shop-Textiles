@@ -1,4 +1,20 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // helper to render 5 stars with half-star support
+  const renderStars = (rating) => {
+    const r = parseFloat(String(rating).replace(',', '.')) || 0;
+    const max = 5;
+    let out = '';
+    for (let i = 1; i <= max; i++) {
+      if (r >= i) {
+        out += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z"/></svg>`;
+      } else if (r >= i - 0.5) {
+        out += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="halfGradH${i}" x1="0" x2="1"><stop offset="50%" stop-color="#FFC107"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z" fill="url(#halfGradH${i})" stroke="#FFC107"/></svg>`;
+      } else {
+        out += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFC107" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z"/></svg>`;
+      }
+    }
+    return out;
+  };
   const productList = document.getElementById("product-list");
 
   try {
@@ -27,8 +43,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="card-body text-center">
             <h5 class="card-title">${product.Name}</h5>
             <p class="card-price text-black fw-bold mb-1">₴ ${product.Price}</p>
-            <div class="mb-2">
-              <span class="text-warning">&#9733;&#9733;&#9733;&#9733;${product.Rating >= 4.5 ? '&#189;' : '&#9734;'}</span>
+            <div class="mb-2 d-flex align-items-center justify-content-center gap-2">
+              <div class="rating-stars">${renderStars(product.Rating)}</div>
               <small class="text-muted">(${product.Rating})</small>
             </div>
           </div>
@@ -48,6 +64,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 document.addEventListener("click", async function (e) {
   if (e.target.classList.contains("buy-btn")) {
+    const btn = e.target;
+    if (btn.disabled) return;
+
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (!user || !user.user_id) {
@@ -55,9 +74,10 @@ document.addEventListener("click", async function (e) {
       return;
     }
 
-    const productId = e.target.dataset.id;
+    const productId = btn.dataset.id;
 
     try {
+      btn.disabled = true;
       const res = await fetch("http://localhost:5000/cart/quick-add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -69,13 +89,16 @@ document.addEventListener("click", async function (e) {
 
       const data = await res.json();
       if (res.ok) {
-        alert("Товар додано до кошика!");
+        showPopup("Товар додано до кошика!");
+        setTimeout(() => { btn.disabled = false; }, 500);
       } else {
-        alert("Помилка: " + data.error);
+        showPopup("Помилка: " + data.error);
+        btn.disabled = false;
       }
     } catch (error) {
       console.error("❌ Помилка додавання:", error);
-      alert("Не вдалося додати товар");
+      showPopup("Не вдалося додати товар");
+      btn.disabled = false;
     }
   }
 });
@@ -120,3 +143,17 @@ document.addEventListener("DOMContentLoaded", () => {
     ribbon.style.display = "none";
   }
 });
+
+function showPopup(message, duration = 2000) {
+  const popup = document.getElementById('popup-message');
+  popup.textContent = message;
+  popup.style.display = 'block';
+  popup.style.opacity = '1';
+
+  setTimeout(() => {
+    popup.style.opacity = '0';
+    setTimeout(() => {
+      popup.style.display = 'none';
+    }, 300);
+  }, duration);
+}

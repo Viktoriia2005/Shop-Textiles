@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   let hasArchived = false;
 
   try {
-    const res = await fetch(`${API_BASE}/orders/user/${user.user_id}/full`);
+    const apiRoot = (typeof API_BASE !== 'undefined' ? API_BASE : 'http://localhost:5000');
+    const res = await fetch(`${apiRoot}/orders/user/${user.user_id}/full`);
     const orders = await res.json();
 
     const uniqueOrders = [];
@@ -36,7 +37,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Хелпер для рендерингу рядків товарів у замовленні
     const renderItemsHtml = (order) => {
-      return order.items.map(item => {
+      const itemsList = order.items || order.products || [];
+      return itemsList.map(item => {
         const photoRaw = getFirst(item, ['photo', 'Photo']) || getFirst(item.product, ['photo', 'Photo']) || '';
         const photo = (typeof photoRaw === 'string' && photoRaw.length) ? photoRaw.split(',')[0].trim() : `img/${getFirst(item, ['product_id', 'productId', 'id']) || 'default'}.jpg`;
 
@@ -45,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const priceRaw = getFirst(item, ['price', 'Price', 'unit_price', 'UnitPrice']) || getFirst(item.product, ['Price', 'price']);
         const price = Number(priceRaw) || 0;
 
-        const quantity = Number(getFirst(item, ['quantity', 'qty', 'Qty'])) || 1;
+  const quantity = Number(getFirst(item, ['quantity', 'qty', 'Qty'])) || Number(getFirst(item, ['count', 'Count'])) || 1;
         const subtotal = price * quantity;
 
         return `
@@ -64,27 +66,38 @@ document.addEventListener('DOMContentLoaded', async () => {
       }).join('');
     };
 
+    // Якщо замовлень немає — показуємо повідомлення і виходимо
+    if (!Array.isArray(uniqueOrders) || uniqueOrders.length === 0) {
+      const noActiveEl = document.getElementById('noActiveOrders');
+      const noArchivedEl = document.getElementById('noArchivedOrders');
+      if (noActiveEl) noActiveEl.classList.remove('d-none');
+      if (noArchivedEl) noArchivedEl.classList.remove('d-none');
+      return;
+    }
+
     // Рендеримо кожне замовлення окремо.
     uniqueOrders.forEach(order => {
       const card = document.createElement('div');
       card.className = 'col-md-6';
 
       const itemsHtml = renderItemsHtml(order);
-      const computedTotal = order.total || order.items.reduce((s, it) => {
+      const itemsList = order.items || order.products || [];
+      const computedTotal = order.total || itemsList.reduce((s, it) => {
         const pr = Number(getFirst(it, ['price', 'Price', 'unit_price'])) || Number(getFirst(it.product, ['Price'])) || 0;
-        const q = Number(getFirst(it, ['quantity', 'qty'])) || 1;
+        const q = Number(getFirst(it, ['quantity', 'qty'])) || Number(getFirst(it, ['count', 'Count'])) || 1;
         return s + pr * q;
       }, 0);
 
       // Якщо в замовленні лише один товар (навіть якщо кількість >1) — показуємо повні деталі одразу
-      if (order.items.length === 1) {
+      const itemCount = (itemsList || []).length;
+      if (itemCount === 1) {
         card.innerHTML = `
           <div class="card shadow-sm">
             <div class="card-body">
               <h5 class="card-title">Замовлення #${order.order_id}</h5>
-              <p class="card-text">Дата: ${new Date(order.order_date).toLocaleDateString()}</p>
+              <p class="card-text">Дата: ${order.order_date ? new Date(order.order_date).toLocaleDateString() : '—'}</p>
               <p class="card-text">Статус: ${order.status || '—'}</p>
-              <p class="card-text fw-bold">Товарів: ${order.items.length}</p>
+              <p class="card-text fw-bold">Товарів: ${itemCount}</p>
               <p class="card-text fw-bold">Сума замовлення: ${computedTotal} грн</p>
               <div class="order-details mt-3">${itemsHtml}</div>
             </div>
@@ -99,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               <h5 class="card-title">Замовлення #${order.order_id}</h5>
               <p class="card-text">Дата: ${new Date(order.order_date).toLocaleDateString()}</p>
               <p class="card-text">Статус: ${order.status || '—'}</p>
-              <p class="card-text fw-bold">Товарів: ${order.items.length}</p>
+              <p class="card-text fw-bold">Товарів: ${itemCount}</p>
               <p class="card-text fw-bold">Сума замовлення: ${computedTotal} грн</p>
               <button class="btn btn-custom mt-2 show-details-btn" data-id="${order.order_id}">Деталі</button>
               <div class="order-details mt-3 d-none" id="${detailsId}">${itemsHtml}<div class="text-end mt-2 fw-bold">Сума: ${computedTotal} грн</div></div>
@@ -115,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
 
-      if (order.status === 'active') {
+      if (order.status === 'pending') {
         activeContainer.appendChild(card);
         hasActive = true;
       } else {
@@ -124,11 +137,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
 
-    if (!hasActive) {
-      document.getElementById('noActiveOrders').classList.remove('d-none');
+    // Покажемо повідомлення про порожні списки (якщо елементи існують у DOM)
+    const noPendingEl = document.getElementById('noPendingOrders');
+    const noArchivedEl = document.getElementById('noArchivedOrders');
+
+    if (!hasActive && noPendingEl) {
+      noPendingEl.classList.remove('d-none');
     }
-    if (!hasArchived) {
-      document.getElementById('noArchivedOrders').classList.remove('d-none');
+    if (!hasArchived && noArchivedEl) {
+      noArchivedEl.classList.remove('d-none');
     }
 
 

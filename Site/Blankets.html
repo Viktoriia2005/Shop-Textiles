@@ -28,8 +28,10 @@
                 <h1 class="mb-0">Ковдри</h1>
             </div>
             <div class="col-md-2 text-end">
-                <a href="register.html" class="me-3">
-                    <img src="img/avatar.png" alt="Регістрація" width="40"></a>
+                <div id="avatarLink" class="user-avatar-wrapper position-relative me-3">
+                    <img src="img/avatar.png" alt="Акаунт" id="avatarIcon" width="40">
+                    <div id="userNameRibbon" class="username-ribbon"></div>
+                </div>
                 <a href="Cart.html" class="me-3">
                     <img src="img/cart.png" alt="Корзинка" width="40">
                 </a>
@@ -52,10 +54,13 @@
             </ul>
         </div>
     </nav>
-    <div class="d-flex justify-content-end">
-        <form id="searchForm" class="search-box d-flex my-3" role="search">
-            <input id="searchInput" class="form-control me-2" type="search" name="query" placeholder="Пошук товару..."
-                aria-label="Search" required>
+    <div class="d-flex justify-content-end position-relative">
+        <form id="searchForm" class="search-box d-flex my-3 w-100" role="search">
+            <div class="w-100 position-relative">
+                <input id="searchInput" class="form-control me-2" type="search" name="query"
+                    placeholder="Пошук товару..." aria-label="Search" required>
+                <div id="searchHints" class="list-group position-absolute w-100"></div>
+            </div>
             <button class="btn btn-custom" type="submit">Знайти</button>
         </form>
     </div>
@@ -74,13 +79,12 @@
                     <li><a href="Dressing_gowns.html" class="text-dark text-decoration-none">Халати</a></li>
                 </ul>
             </aside>
-            <!-- Контент справа -->
-            <section class="col-md-9"> <!-- ✅ заміна -->
+            <section class="col-md-9">
                 <div id="blanketList" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"></div>
             </section>
         </div>
     </main>
-    <!-- Пагінація -->
+
     <div class="pagination-wrapper mt-4">
         <div class="pagination d-flex justify-content-center flex-wrap">
             <div class="page-item"><a class="page-link" href="#">1</a></div>
@@ -105,6 +109,7 @@
     <script src="config.js"></script>
     <script src="searchForm.js"></script>
     <script src="Blankets_category.js"></script>
+    <div id="popup-message" style="display: none;"></div>
 </body>
 
 </html>

@@ -14,7 +14,7 @@ if (!searchInput || !feedback || !results) {
   console.warn('searchForm.js: пошукові елементи не знайдені на сторінці — пропускаємо ініціалізацію');
 } else {
 
-// 🔎 Автопідказки
+  // 🔎 Автопідказки
   searchInput.addEventListener("input", async function () {
     const hint = searchInput.value.trim().toLowerCase();
 
@@ -127,7 +127,24 @@ if (form && searchInput && feedback && results) {
         return;
       }
 
-      feedback.innerHTML = `<p class="text-success">Знайдено: ${visible.length} товарів (в наявності)</p>`;
+      feedback.innerHTML = `<p style="color: #834906">Знайдено: ${visible.length} товарів (в наявності)</p>`;
+
+      // small helper to render stars with half support
+      const renderStars = (rating) => {
+        const r = parseFloat(String(rating).replace(',', '.')) || 0;
+        const max = 5;
+        let out = '';
+        for (let i = 1; i <= max; i++) {
+          if (r >= i) {
+            out += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z"/></svg>`;
+          } else if (r >= i - 0.5) {
+            out += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="halfGradS${i}" x1="0" x2="1"><stop offset="50%" stop-color="#FFC107"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z" fill="url(#halfGradS${i})" stroke="#FFC107"/></svg>`;
+          } else {
+            out += `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFC107" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431L23.4 9.748l-5.6 5.458L19.336 24 12 19.897 4.664 24l1.536-8.794L.6 9.748l7.732-1.73L12 .587z"/></svg>`;
+          }
+        }
+        return out;
+      };
 
       visible.forEach(product => {
         const photoRaw = product.Photo || product.photo || '';
@@ -135,11 +152,11 @@ if (form && searchInput && feedback && results) {
         const name = product.Name || product.name || 'Товар';
         const price = product.Price || product.price || '—';
 
-          const card = document.createElement("div");
-          card.className = "col-md-4";
-          // додаємо кнопку "Купити" у картку результату
-          const productId = product.product_id || product.id || product.ProductId || product.productId;
-          card.innerHTML = `
+        const card = document.createElement("div");
+        card.className = "col-md-4";
+        // додаємо кнопку "Купити" у картку результату
+        const productId = product.product_id || product.id || product.ProductId || product.productId;
+        card.innerHTML = `
             <div class="card h-100">
               <a href="#">
                 <img src="${photoPath}" class="card-img-top" alt="${name}">
@@ -148,8 +165,8 @@ if (form && searchInput && feedback && results) {
                 <div>
                   <h5 class="card-title">${name}</h5>
                   <p class="card-price text-black fw-bold mb-1">₴ ${price}</p>
-                  <div class="mb-2">
-                    <span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                  <div class="mb-2 d-flex align-items-center justify-content-center gap-2">
+                    <div class="rating-stars">${renderStars(product.Rating || product.rating)}</div>
                     <small class="text-muted">(${product.Rating || product.rating || ''})</small>
                   </div>
                 </div>
@@ -158,40 +175,45 @@ if (form && searchInput && feedback && results) {
             </div>
           `;
 
-          if (results) results.appendChild(card);
+        if (results) results.appendChild(card);
 
-          // Кнопка "Купити" — робить quick-add до кошика, як на головній
-          const buyBtn = card.querySelector('.buy-btn');
-          if (buyBtn) {
-            buyBtn.addEventListener('click', async (e) => {
-              e.preventDefault();
-              const rawUser = localStorage.getItem('user');
-              let user = null;
-              try { user = JSON.parse(rawUser); } catch (err) { /* ignore */ }
-              if (!user || !user.user_id) {
-                window.location.href = 'login.html';
-                return;
-              }
+        // Кнопка "Купити" — робить quick-add до кошика, як на головній
+        const buyBtn = card.querySelector('.buy-btn');
+        if (buyBtn) {
+          buyBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            if (buyBtn.disabled) return;
 
-              const apiRoot = (typeof API_BASE !== 'undefined' ? API_BASE : 'http://localhost:5000');
-              try {
-                const resAdd = await fetch(`${apiRoot}/cart/quick-add`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ user_id: user.user_id, product_id: Number(buyBtn.dataset.id) })
-                });
-                const data = await resAdd.json();
-                if (resAdd.ok) {
-                  alert('Товар додано до кошика!');
-                } else {
-                  alert('Помилка: ' + (data.error || 'Не вдалося додати товар'));
-                }
-              } catch (err) {
-                console.error('❌ Помилка додавання в кошик:', err);
-                alert('Не вдалося додати товар');
+            const rawUser = localStorage.getItem('user');
+            let user = null;
+            try { user = JSON.parse(rawUser); } catch (err) { /* ignore */ }
+            if (!user || !user.user_id) {
+              window.location.href = 'login.html';
+              return;
+            }
+
+            const apiRoot = (typeof API_BASE !== 'undefined' ? API_BASE : 'http://localhost:5000');
+            try {
+              buyBtn.disabled = true;
+              const resAdd = await fetch(`${apiRoot}/cart/quick-add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: user.user_id, product_id: Number(buyBtn.dataset.id) })
+              });
+              const data = await resAdd.json();
+              if (resAdd.ok) {
+                alert('Товар додано до кошика!');
+              } else {
+                alert('Помилка: ' + (data.error || 'Не вдалося додати товар'));
               }
-            });
-          }
+            } catch (err) {
+              console.error('❌ Помилка додавання в кошик:', err);
+              alert('Не вдалося додати товар');
+            } finally {
+              buyBtn.disabled = false;
+            }
+          });
+        }
       });
     } catch (error) {
       console.error("❌ Помилка пошуку:", error);

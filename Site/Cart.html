@@ -27,7 +27,10 @@
         <h1 class="mb-0">Moya.domivka_ua</h1>
       </div>
       <div class="col-md-2 text-end">
-        <a href="register.html" class="me-3"><img src="img/avatar.png" alt="Регістрація" width="40"></a>
+        <div id="avatarLink" class="user-avatar-wrapper position-relative me-3">
+          <img src="img/avatar.png" alt="Акаунт" id="avatarIcon" width="40">
+          <div id="userNameRibbon" class="username-ribbon"></div>
+        </div>
       </div>
     </div>
   </header>
@@ -48,8 +51,8 @@
     <!-- 🔹 Контейнер для товарів -->
     <div id="cart-items"></div>
 
-  <!-- 🔹 Підсумок -->
-  <div id="cart-summary" class="row justify-content-end mt-4">
+    <!-- 🔹 Підсумок -->
+    <div id="cart-summary" class="row justify-content-end mt-4">
       <div class="col-md-6">
         <div class="card bg-light border-0 shadow-sm">
           <div class="card-body text-end">
@@ -74,6 +77,7 @@
   </footer>
   <script src="config.js"></script>
   <script src="Cart.js"></script>
+  <div id="popup-message" style="display: none;"></div>
 </body>
 
 </html>
