@@ -15,6 +15,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
   <link rel="stylesheet" href="account.css">
 </head>
 
@@ -26,11 +29,6 @@
       </div>
       <div class="col-md-8 text-center">
         <h1 class="mb-0">Мій акаунт</h1>
-      </div>
-      <div class="col-md-2 text-end">
-        <a href="Cart.html" class="me-3">
-          <img src="img/cart.png" alt="Корзинка" width="40">
-        </a>
       </div>
     </div>
   </header>
@@ -64,7 +62,7 @@
           <li style="font-weight: bold; background-color: #DEB887;">Особиста інформація</li>
           <li>Мої адреси</li>
           <li>Мої картки</li>
-          <li>Персональні дані</li>
+          <li id="personalDataLink" style="cursor: pointer;">Персональні дані</li>
 
           <li style="font-weight: bold; background-color: #DEB887;">Додаток</li>
           <li>Підтримка</li>
@@ -92,6 +90,36 @@
       </div>
     </div>
   </footer>
+  <!-- Modal -->
+  <div class="modal fade" id="personalDataModal" tabindex="-1" aria-labelledby="personalDataLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="personalDataForm">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="personalDataLabel">Редагування персональних даних</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="editName" class="form-label">Ім’я</label>
+              <input type="text" class="form-control" id="editName" required>
+            </div>
+            <div class="mb-3">
+              <label for="editEmail" class="form-label">Електронна пошта</label>
+              <input type="email" class="form-control" id="editEmail" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Закрити</button>
+            <button type="submit" class="btn btn-custom">Зберегти зміни</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- popup message element (hidden by default) -->
+  <div id="popup-message" style="display: none;" role="alert"></div>
+
   <script src="config.js"></script>
   <script src="account.js"></script>
 </body>
