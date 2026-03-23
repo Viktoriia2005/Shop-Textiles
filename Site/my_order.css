@@ -105,3 +105,146 @@ footer {
 .card-text{
   color: #a0522d;
 }
+
+#paymentResultBanner {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.order-card {
+  border: 1px solid #f1dfcc;
+}
+
+.order-card-archive .delivery-timeline,
+.order-card-archive .payment-failed-note {
+  display: none;
+}
+
+.order-status-archive {
+  font-weight: 700;
+  color: #1b5e20;
+}
+
+.order-details-toggle {
+  margin-top: 0.8rem;
+}
+
+.order-archive-details {
+  margin-top: 0.6rem;
+}
+
+.order-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.order-items-list {
+  border-top: 1px dashed #d8b08a;
+  border-bottom: 1px dashed #d8b08a;
+  padding: 0.7rem 0;
+}
+
+.order-item-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.35rem 0;
+}
+
+.order-item-photo {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.order-item-name {
+  font-weight: 600;
+}
+
+.order-item-sub {
+  color: #7a5b45;
+  font-size: 0.95rem;
+}
+
+.order-item-total {
+  font-weight: 700;
+  color: #7a4a1e;
+}
+
+.order-total {
+  text-align: right;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 0.8rem;
+}
+
+.delivery-timeline {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.timeline-step {
+  border: 1px solid #d7b08a;
+  border-radius: 12px;
+  padding: 0.55rem;
+  background: #fff8ef;
+  text-align: center;
+  min-height: 110px;
+}
+
+.timeline-step.pending {
+  opacity: 0.75;
+}
+
+.timeline-step.active {
+  background: #f3dfc9;
+  border-color: #b07a3a;
+  box-shadow: 0 0 0 2px rgba(176, 122, 58, 0.15);
+}
+
+.timeline-step.done {
+  background: #e6f4e6;
+  border-color: #2e7d32;
+}
+
+.step-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.step-text {
+  font-size: 0.88rem;
+  line-height: 1.2;
+}
+
+.payment-failed-note {
+  background: #fff1f1;
+  border: 1px solid #e0a8a8;
+  border-radius: 10px;
+  padding: 0.8rem;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 991px) {
+  .delivery-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-step {
+    min-height: auto;
+  }
+
+  .order-item-row {
+    grid-template-columns: 54px 1fr;
+  }
+
+  .order-item-total {
+    grid-column: 2;
+    justify-self: end;
+  }
+}

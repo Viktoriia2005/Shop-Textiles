@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const totalDisplay = document.querySelectorAll("#cart-total, #cart-total-final");
   const checkoutBtn = document.getElementById("checkout-btn");
   const cartSummary = document.getElementById('cart-summary');
+  const paymentModalEl = document.getElementById("paymentModal");
+  const paymentForm = document.getElementById("paymentForm");
 
   // 🔄 Автоматичне оновлення кошика
   setInterval(loadCart, 3000);
@@ -116,8 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (checkoutBtn) checkoutBtn.style.display = 'none';
     }
   }
-  // Реєструємо обробник оформлення замовлення ОДИН РАЗ
-  checkoutBtn.addEventListener("click", async () => {
+  const collectOrderItems = () => {
     const orderItems = [];
 
     document.querySelectorAll(".cart-item").forEach(row => {
@@ -126,46 +127,110 @@ document.addEventListener("DOMContentLoaded", async () => {
       orderItems.push({ product_id: productId, quantity });
     });
 
+    return orderItems;
+  };
+
+  // Імітація оплати через модальне вікно
+  checkoutBtn.addEventListener("click", () => {
+    const orderItems = collectOrderItems();
     if (orderItems.length === 0) {
       alert("Кошик порожній");
       return;
     }
 
-    try {
-      // Блокуємо кнопку, щоб уникнути подвійного кліку
-      checkoutBtn.disabled = true;
+    if (!paymentModalEl || typeof bootstrap === "undefined") {
+      alert("Модальне вікно оплати недоступне");
+      return;
+    }
 
-      const res = await fetch("http://localhost:5000/orders", {
+    const modal = new bootstrap.Modal(paymentModalEl);
+    modal.show();
+  });
+
+  paymentForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const orderItems = collectOrderItems();
+    if (orderItems.length === 0) {
+      alert("Кошик порожній");
+      return;
+    }
+
+    const cardNumber = document.getElementById("cardNumber")?.value.trim() || "";
+    const expiryDate = document.getElementById("expiryDate")?.value.trim() || "";
+    const cvv = document.getElementById("cvv")?.value.trim() || "";
+    const method = document.getElementById("method")?.value || "card";
+
+    if (method === "card" && (cardNumber.replace(/\s/g, "").length < 16 || expiryDate.length < 4 || cvv.length < 3)) {
+      alert("Некоректні дані картки");
+      return;
+    }
+
+    const submitBtn = paymentForm.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    checkoutBtn.disabled = true;
+
+    try {
+      const res = await fetch("http://localhost:5000/orders/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, items: orderItems })
+        body: JSON.stringify({
+          user_id: userId,
+          items: orderItems,
+          payment_method: method,
+          card_number: cardNumber,
+          expiry_date: expiryDate,
+          cvv
+        })
       });
 
-      const data = await res.json();
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        data = { error: "Сервер повернув некоректну відповідь" };
+      }
 
-      if (res.ok) {
-        // Спробуємо очистити кошик на сервері (якщо бекенд підтримує)
-        try {
-          await fetch(`http://localhost:5000/cart/${userId}`, { method: 'DELETE' });
-        } catch (clearErr) {
-          console.warn('Не вдалося очистити кошик на сервері:', clearErr);
-          // не перериваємо процес оформлення — користувач вже оформив замовлення
+      if (res.ok || res.status === 402) {
+        const modal = bootstrap.Modal.getInstance(paymentModalEl);
+        if (modal) modal.hide();
+
+        const paymentStatus = data.payment_status || (res.ok ? "успішна" : "невдала");
+        const paymentOk = paymentStatus === "успішна";
+
+        if (paymentOk) {
+          cartContainer.innerHTML = "";
+          totalDisplay.forEach(el => el.textContent = "0 грн");
         }
 
-        // Оновлюємо інтерфейс
-        cartContainer.innerHTML = "";
-        totalDisplay.forEach(el => el.textContent = "0 грн");
-        showPopup("Замовлення оформлено!");
+        const paymentMessage = paymentOk
+          ? `Оплата успішна (${method})! Замовлення оформлено.`
+          : `Оплата не успішна (${method}). Спробуйте ще раз.`;
+
+        sessionStorage.setItem("lastPaymentResult", JSON.stringify({
+          order_id: data.order_id,
+          payment_status: paymentStatus,
+          payment_method: method,
+          message: paymentMessage,
+          created_at: new Date().toISOString()
+        }));
+
+        showPopup(paymentMessage);
         setTimeout(() => {
           window.location.href = "my_order.html";
         }, 2000);
       } else {
         alert("Помилка: " + data.error);
+        checkoutBtn.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
+        const modal = new bootstrap.Modal(paymentModalEl);
+        modal.show();
       }
     } catch (error) {
       console.error("❌ Помилка оформлення:", error);
       alert("Не вдалося оформити замовлення");
       checkoutBtn.disabled = false;
+      if (submitBtn) submitBtn.disabled = false;
     }
   });
 
@@ -228,7 +293,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (user && typeof user.user_id === "number") {
-      window.location.href = "account.html";
+      if (user.role === 'admin') {
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "account.html";
+      }
     } else {
       // Якщо користувач не в системі — направляємо на сторінку реєстрації
       window.location.href = "register.html";
@@ -248,6 +317,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ribbon.textContent = `Привіт, ${user.name}!`;
   } else {
     ribbon.style.display = "none";
+  }
+
+  const yearSpan = document.getElementById("year");
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
   }
 });
 
