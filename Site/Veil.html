@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ua">
 
 <head>
@@ -33,7 +33,7 @@
                     <div id="userNameRibbon" class="username-ribbon"></div>
                 </div>
                 <a href="Cart.html" class="me-3" id="cart-icon">
-                    <img src="img/cart.png" alt="Корзинка" width="40">
+                    <img src="img/cart.png" alt="Кошик" width="40">
                 </a>
             </div>
         </div>
@@ -61,6 +61,17 @@
             <button class="btn btn-custom" type="submit">Знайти</button>
         </form>
     </div>
+    <div class="d-flex justify-content-end mt-3 mb-3">
+        <div class="dropdown">
+            <button class="btn btn-link p-0" id="sortMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="img/sort.png" alt="Сортувати" class="sort-icon">
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortMenuButton">
+                <li><button class="dropdown-item" id="sortAsc">Ціна: за зростанням</button></li>
+                <li><button class="dropdown-item" id="sortDesc">Ціна: за спаданням</button></li>
+            </ul>
+        </div>
+    </div>
     <div id="searchFeedback" class="mt-2 text-end"></div>
     <main class="container-fluid mt-0">
         <div class="row">
@@ -70,31 +81,23 @@
                     <li><a href="Blankets.html" class="text-dark text-decoration-none">Ковдри</a></li>
                     <li><a href="Pillows.html" class="text-dark text-decoration-none">Подушки</a></li>
                     <li><a href="Linens.html" class="text-dark text-decoration-none">Постільна білизна</a></li>
-                    <li><a href="Sauna_towels.html" class="text-dark text-decoration-none">Рушники (баня)</a></li>
-                    <li><a href="Kitchen_towels.html" class="text-dark text-decoration-none">Рушники (кухня)</a></li>
+                    <li><a href="Sauna_towels.html" class="text-dark text-decoration-none">Рушники (баня)</a>
+                    </li>
+                    <li><a href="Kitchen_towels.html" class="text-dark text-decoration-none">Рушники
+                            (кухня)</a></li>
                     <li><a href="Tablecloths.html" class="text-dark text-decoration-none">Скатертини</a></li>
                     <li><a href="Dressing_gowns.html" class="text-dark text-decoration-none">Халати</a></li>
                 </ul>
             </aside>
             <section class="col-md-9 pt-3">
                 <div id="veilList" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                    <!-- JS вставить картки халатів сюди -->
+                    <!-- JS Ð²ÑÑ‚Ð°Ð²Ð¸Ñ‚ÑŒ ÐºÐ°Ñ€Ñ‚ÐºÐ¸ Ñ…Ð°Ð»Ð°Ñ‚Ñ–Ð² ÑÑŽÐ´Ð¸ -->
                 </div>
             </section>
     </main>
-    <!-- Пагінація -->
-    <div class="pagination-wrapper mt-4">
-        <div class="pagination d-flex justify-content-center flex-wrap">
-            <div class="page-item"><a class="page-link" href="#">1</a></div>
-            <div class="page-item"><a class="page-link" href="#">2</a></div>
-            <div class="page-item"><a class="page-link" href="#">3</a></div>
-            <div class="page-item"><a class="page-link" href="#">4</a></div>
-            <div class="page-item"><a class="page-link" href="#">→</a></div>
-        </div>
-    </div>
     <footer class="bg-dark text-dark py-3 mt-auto">
         <div class="container text-center">
-            <p>&copy; 2025 Moya.domivka_ua. Усі права захищено.</p>
+            <p>&copy; <span id="year"></span> Moya.domivka_ua. Усі права захищені.</p>
             <div class="footer-links d-flex flex-column align-items-center">
                 <a href="Home_page.html" class="text-dark text-decoration-none mb-2">Головна</a>
                 <a href="Delivery_and_payment.html" class="text-dark text-decoration-none mb-2">Доставка й
@@ -107,6 +110,9 @@
     <script src="config.js"></script>
     <script src="Veil_category.js"></script>
     <script src="searchForm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
     <div id="popup-message" style="display: none;"></div>
 </body>
 
