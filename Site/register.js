@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const result = await registerUser({ name, email, password });
+    // ✅ додаємо роль user
+    const result = await registerUser({ name, email, password, role: 'user' });
 
     if (result.user && result.user.id) {
       messageDiv.textContent = result.message || 'Реєстрація успішна';
@@ -34,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       localStorage.setItem('user', JSON.stringify({
         user_id: result.user.id,
-        name: result.user.name
+        name: result.user.name,
+        role: 'user'
       }));
       form.reset();
 
@@ -46,4 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
       messageDiv.className = 'text-danger';
     }
   });
+  const yearSpan = document.getElementById("year");
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
 });
