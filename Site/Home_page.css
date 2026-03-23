@@ -235,3 +235,241 @@ footer {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
+
+html,
+body {
+  height: 100%;
+  font-family: "Shantell Sans", serif;
+  overflow-x: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 4vw;
+  /* адаптивний заголовок */
+}
+
+main {
+  flex: 1;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.card-img-top {
+  height: 25vh;
+  /* висота зображення відносно вікна */
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-body {
+  flex-grow: 1;
+}
+
+.card:hover {
+  transform: translateY(-2%);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+aside {
+  font-size: 1.5vw;
+}
+
+aside ul li {
+  font-size: 1.5vw;
+}
+
+aside h5 {
+  font-size: 2.5vw;
+}
+
+.list-unstyled {
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.list-unstyled a:hover {
+  background-color: #f3d0a3;
+  color: black;
+  box-shadow: 0 0.4vw 0.8vw rgba(0, 0, 0, 0.2);
+}
+
+.no-border {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 1.4rem;
+  transition: transform 0.3s ease;
+  color: #dc3545;
+}
+
+.no-border.unliked {
+  color: #6c757d;
+}
+
+.pulse-heart {
+  animation: pulse 0.6s ease;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.like-toggle {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+header,
+nav,
+footer {
+  background-image: linear-gradient(to bottom left, #DEB887, #A0522D);
+  color: black;
+}
+
+nav {
+  margin-bottom: 2%;
+}
+
+.navbar-nav {
+  display: flex;
+  gap: 8rem;
+}
+
+.navbar-nav .nav-link {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 0.5vw 1vw;
+  border-radius: 0.6vw;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: #f3d0a3;
+  color: black;
+  box-shadow: 0 0.4vw 0.8vw rgba(0, 0, 0, 0.2);
+}
+
+footer {
+  margin-top: 3%;
+  padding-top: 2%;
+}
+
+.btn-custom {
+  background-color: #a0522d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1.2vw;
+  font-size: 1.2vw;
+  transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: #e9955a;
+}
+
+.search-box {
+  width: 100%;
+  max-width: 50%;
+}
+
+/* Align search input and button heights on home page */
+.search-box .form-control,
+.search-box .btn {
+  height: 3.2rem;
+  line-height: 1;
+}
+
+.search-box .form-control {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.search-box .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#searchHints {
+  z-index: 1000;
+  top: 100%;
+  left: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.user-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 1rem;
+}
+
+.username-ribbon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  /* починається прямо з лівого краю аватарки */
+  transform: translate(-100%, -50%);
+  /* зміщення повністю вліво і по центру вертикалі */
+  background-color: #ffffff;
+  color: #834906;
+  padding: 6px 12px;
+  border-radius: 0 8px 8px 0;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 6px rgba(61, 59, 59, 0.534);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-avatar-wrapper:hover .username-ribbon {
+  transform: translate(-110%, -50%);
+  /* виїжджає трохи далі вліво */
+  opacity: 1;
+}
+
+#popup-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f3d0a3;
+  color: #000000;
+  padding: 2% 4%;
+  border-radius: 1.5em;
+  box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+  z-index: 9999;
+  text-align: center;
+  max-width: 80vw;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}А
