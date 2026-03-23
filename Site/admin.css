@@ -1,0 +1,305 @@
+html,
+body {
+  height: 100%;
+  font-family: "Shantell Sans", serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2vw;
+}
+
+h1 {
+  font-size: 3vw;
+  text-align: left;
+}
+
+main {
+  flex: 1;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+header,
+nav,
+footer {
+  background-image: linear-gradient(to bottom left, #DEB887, #A0522D);
+  color: black;
+}
+
+.card-img-top {
+  height: 25vh;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  border-radius: 6px 6px 0 0;
+}
+
+.card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2%);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+  flex-grow: 1;
+}
+
+.btn-custom {
+  background-color: #a0522d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1.2vw;
+  font-size: 1.2vw;
+  transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: #e9955a;
+}
+
+.pagination {
+  background-color: transparent;
+  padding-top: 2%;
+  padding-bottom: 2%;
+}
+
+.page-item {
+  margin: 0 0.6vw;
+}
+
+.page-link {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  color: #ad6836;
+  font-weight: 500;
+  padding: 0.6vw 1.2vw;
+  border-radius: 8px;
+  border: 0.1vw solid #d8a47f;
+  background-color: transparent;
+  transition: color 0.4s ease;
+}
+
+.page-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(to right, #FFE4C4, #DEB887);
+  z-index: -1;
+  transition: left 0.4s ease;
+}
+
+.page-link:hover {
+  color: rgb(0, 0, 0);
+}
+
+.page-link:hover::before {
+  left: 0;
+}
+
+.search-box {
+  width: 100%;
+  max-width: 98%;
+}
+
+/* Align search input and button heights on home page */
+.search-box .form-control,
+.search-box .btn {
+  height: 3.2rem;
+  line-height: 1;
+}
+
+.search-box .form-control {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.search-box .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#searchHints {
+  z-index: 1000;
+  top: 100%;
+  left: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#searchResults,
+#veilList,
+#product-list,
+#productList,
+#product-list-container,
+.product-results {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  /* space from the main heading/content */
+}
+
+/* Make the bootstrap columns use flex so cards inside stretch to equal height */
+#searchResults .col,
+#veilList .col,
+#product-list .col,
+#productList .col,
+#product-list-container .col,
+.product-results .col {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 1rem;
+}
+
+/* Ensure cards inside columns fill available height and have internal spacing */
+#searchResults .card,
+#veilList .card,
+#product-list .card,
+#productList .card,
+#product-list-container .card,
+.product-results .card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin-bottom: 0;
+  /* column controls spacing */
+}
+
+/* Slightly increase the gap between rows (works with bootstrap .row.gy- classes) */
+.row.gy-4 {
+  row-gap: 1.6rem;
+  column-gap: 1rem;
+}
+
+/* Add a small bottom margin to images inside cards so text doesn't touch image */
+.card-img-top {
+  margin-bottom: 0.5rem;
+}
+
+.logout {
+  background-color: #a0522d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 5.5% 13%;
+  font-size: 1.2vw;
+  transition: background-color 0.3s ease;
+
+}
+
+/* flash message styling re-used across pages */
+#popup-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f3d0a3;
+  color: #000000;
+  padding: 2% 4%;
+  border-radius: 1.5em;
+  box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, 0.2);
+  font-size: 1.2rem;
+  z-index: 9999;
+  text-align: center;
+  max-width: 80vw;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#popup-message[style*="display: none"] {
+  display: none !important;
+}
+
+.logout:hover {
+  background-color: #e9955a;
+  color: black;
+}
+
+.add-btn {
+  position: fixed;
+  bottom: 3%;
+  right: 3%;
+  background-color: #a0522d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 5%;
+  height: 8%;
+  min-width: 60px;
+  min-height: 60px;
+  max-width: 80px;
+  max-height: 80px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #e9955a;
+  transform: scale(1.1);
+  color: black;
+}
+
+/* Кнопка "Змінити" */
+.edit-btn {
+  background-color: #deb887;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 2% 4%;
+  font-size: 1.2vw;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.edit-btn:hover {
+  background-color: #8b4513;
+  color: #fff;
+}
+
+/* Кнопка "Видалити" */
+.delete-btn {
+  background-color: #8b4513;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 2% 4%;
+  font-size: 1.2vw;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #deb887;
+  color: #000;
+}
+
+/* Контейнер з товарами */
+#adminList {
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+/* Пагінація */
+.pagination-wrapper {
+  margin-top: 3%;
+  margin-bottom: 5%;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination .page-link {
+  margin: 0 0.5%;
+}
