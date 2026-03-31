@@ -12,6 +12,40 @@ document.addEventListener("DOMContentLoaded", async () => {
   const cartSummary = document.getElementById('cart-summary');
   const paymentModalEl = document.getElementById("paymentModal");
   const paymentForm = document.getElementById("paymentForm");
+  const cardNumberInput = document.getElementById("cardNumber");
+  const expiryInput = document.getElementById("expiryDate");
+  const cvvInput = document.getElementById("cvv");
+
+  if (cardNumberInput) {
+    cardNumberInput.addEventListener("input", () => {
+      let value = cardNumberInput.value.replace(/\D/g, "");
+      value = value.substring(0, 16);
+      let formatted = "";
+      for (let i = 0; i < value.length; i += 4) {
+        if (i > 0) formatted += " ";
+        formatted += value.substring(i, i + 4);
+      }
+      cardNumberInput.value = formatted;
+    });
+  }
+
+  if (expiryInput) {
+    expiryInput.addEventListener("input", () => {
+      let value = expiryInput.value.replace(/\D/g, "");
+      value = value.substring(0, 4);
+      if (value.length >= 3) {
+        expiryInput.value = value.substring(0, 2) + "/" + value.substring(2);
+      } else {
+        expiryInput.value = value;
+      }
+    });
+  }
+
+  if (cvvInput) {
+    cvvInput.addEventListener("input", () => {
+      cvvInput.value = cvvInput.value.replace(/\D/g, "").substring(0, 3);
+    });
+  }
 
   // 🔄 Автоматичне оновлення кошика
   setInterval(loadCart, 3000);
