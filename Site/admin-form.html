@@ -50,7 +50,12 @@
                     placeholder="Ціна товару" required>
                 </div>
                 <div class="mb-3">
-                  <input id="field-photo" type="text" name="photo" class="form-control" placeholder="Шлях до фото">
+                  <label for="field-photo-file" class="form-label mb-1">Фото товару</label>
+                  <input id="field-photo-file" type="file" class="form-control" accept="image/*">
+                  <div id="photo-help" class="form-text">Select file from img folder.</div>
+                  <div id="photo-file-path" class="form-text mt-1"></div>
+                  <img id="photo-preview" alt="Прев’ю фото" style="display:none; max-width: 200px; margin-top: 10px; border: 1px solid #ccc; padding: 5px;">
+                  <input id="field-photo" type="hidden" name="photo">
                 </div>
                 <div class="mb-3">
                   <input id="field-quantity" type="number" name="quantity" class="form-control"

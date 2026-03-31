@@ -2,6 +2,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("adminForm");
   const saveBtn = document.getElementById("save-btn");
   const deleteBtn = document.getElementById("delete-btn");
+  const photoInput = document.getElementById("field-photo-file");
+  const photoPath = document.getElementById("photo-file-path");
+  const photoPreview = document.getElementById("photo-preview");
+  const photoHidden = document.getElementById("field-photo");
   const backBtn = document.getElementById("back-to-catalog");
   const title = document.querySelector(".card-body h3");
 
@@ -25,6 +29,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("field-description").value = product.Description ?? product.description ?? "";
       document.getElementById("field-price").value = product.Price ?? product.price ?? "";
       document.getElementById("field-photo").value = product.Photo ?? product.photo ?? "";
+      if (photoHidden) photoHidden.value = product.Photo ?? product.photo ?? "";
+      if (photoPath) {
+        const p = product.Photo ?? product.photo ?? "";
+        photoPath.textContent = p ? `Path: ${p}` : "";
+      }
+      const previewSrc = product.Photo ?? product.photo ?? "";
+      if (previewSrc) setPhotoPreview(previewSrc);
       document.getElementById("field-quantity").value = product.Stock ?? product.stock ?? "";
     } catch (err) {
       console.error("Помилка завантаження товару:", err);
@@ -53,6 +64,38 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Збереження (додавання або редагування)
+
+  function setPhotoPreview(src) {
+    if (!photoPreview) return;
+    if (src) {
+      photoPreview.src = src;
+      photoPreview.style.display = "block";
+    } else {
+      photoPreview.src = "";
+      photoPreview.style.display = "none";
+    }
+  }
+
+  if (photoInput) {
+    photoInput.addEventListener("change", () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (file) {
+        if (photoPath) photoPath.textContent = `Path: img/${file.name}`;
+        if (photoHidden) photoHidden.value = `img/${file.name}`;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setPhotoPreview(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        if (photoPath) photoPath.textContent = "";
+        if (photoHidden) photoHidden.value = "";
+        setPhotoPreview("");
+      }
+    });
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -60,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       name: document.getElementById("field-name").value.trim(),
       description: document.getElementById("field-description").value.trim(),
       price: parseFloat(document.getElementById("field-price").value),
-      photo: document.getElementById("field-photo").value.trim(),
+      photo: (document.getElementById("field-photo").value || "").trim(),
       stock: parseInt(document.getElementById("field-quantity").value) || 0,
     };
 
