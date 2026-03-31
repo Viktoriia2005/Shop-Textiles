@@ -20,9 +20,18 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // 💾 Запис у базу
+        const [roleRows] = await db.execute(
+            'SELECT role_id FROM roles WHERE name_role = ?',
+            ['user']
+        );
+        if (roleRows.length === 0) {
+            return res.status(500).json({ error: 'Role user not found' });
+        }
+        const roleId = roleRows[0].role_id;
+
         const [result] = await db.execute(
-            'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
-            [name, email, hashedPassword]
+            'INSERT INTO users (Name, Email, Password, role_id) VALUES (?, ?, ?, ?)',
+            [name, email, hashedPassword, roleId]
         );
 
         // 🆔 Отримання ID нового користувача
