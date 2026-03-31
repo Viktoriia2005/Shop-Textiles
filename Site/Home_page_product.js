@@ -142,6 +142,10 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     ribbon.style.display = "none";
   }
+  const yearSpan = document.getElementById("year");
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
 });
 
 function showPopup(message, duration = 2000) {

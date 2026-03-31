@@ -101,4 +101,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       modal.show();
     });
   }
+  const yearSpan = document.getElementById("year");
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
 });
