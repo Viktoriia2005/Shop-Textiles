@@ -6,7 +6,19 @@ const searchInput = document.getElementById("searchInput");
 const hintsBox = document.getElementById("searchHints");
 const feedback = document.getElementById("searchFeedback");
 // Results can live under different IDs depending on page; fall back to common containers
-const results = document.getElementById("searchResults") || document.getElementById("veilList") || document.getElementById("product-list") || document.getElementById("productList") || document.getElementById("product-list-container");
+const results =
+  document.getElementById("searchResults") ||
+  document.getElementById("veilList") ||
+  document.getElementById("blanketList") ||
+  document.getElementById("dressList") ||
+  document.getElementById("kitchenList") ||
+  document.getElementById("linensList") ||
+  document.getElementById("pillowsList") ||
+  document.getElementById("saunaList") ||
+  document.getElementById("tableList") ||
+  document.getElementById("product-list") ||
+  document.getElementById("productList") ||
+  document.getElementById("product-list-container");
 
 if (!searchInput || !feedback || !results) {
   // Нічого не робимо якщо базові елементи відсутні на сторінці
@@ -16,7 +28,9 @@ if (!searchInput || !feedback || !results) {
 
   // 🔎 Автопідказки
   searchInput.addEventListener("input", async function () {
-    const hint = searchInput.value.trim().toLowerCase();
+    const hintRaw = searchInput.value.trim();
+    const hint = hintRaw.toLowerCase();
+    const hintIsNumeric = /^\d+$/.test(hintRaw);
 
     if (hint.length < 1) {
       if (hintsBox) hintsBox.innerHTML = "";
@@ -42,9 +56,15 @@ if (!searchInput || !feedback || !results) {
       hints.forEach(item => {
         const option = document.createElement("button");
         option.className = "list-group-item list-group-item-action";
-        option.textContent = item.Name || item.name || '';
+        const labelName = item.Name || item.name || '';
+        const labelId = item.product_id || item.id || '';
+        option.textContent = labelId ? `${labelId} — ${labelName}` : labelName;
         option.addEventListener("click", () => {
-          searchInput.value = item.Name || item.name || '';
+          if (hintIsNumeric && labelId) {
+            searchInput.value = String(labelId);
+          } else {
+            searchInput.value = labelName || '';
+          }
           if (hintsBox) hintsBox.innerHTML = "";
           const form = document.getElementById("searchForm");
           if (form) form.dispatchEvent(new Event("submit"));
@@ -75,6 +95,7 @@ if (form && searchInput && feedback && results) {
     e.preventDefault();
 
     const query = searchInput.value.trim();
+    const queryIsNumeric = /^\d+$/.test(query);
     if (hintsBox) hintsBox.innerHTML = "";
     results.innerHTML = "";
 
@@ -86,10 +107,24 @@ if (form && searchInput && feedback && results) {
     feedback.innerHTML = `<p class="text-muted">Шукаємо: <strong>${query}</strong>…</p>`;
 
     try {
-      const res = await fetch(`${PRODUCTS_BASE}?search=${encodeURIComponent(query)}`);
-      if (!res.ok) throw new Error(`Сервер повернув статус: ${res.status}`);
+      let products = [];
+      if (queryIsNumeric) {
+        const resById = await fetch(`${PRODUCTS_BASE}/${encodeURIComponent(query)}`);
+        if (resById.ok) {
+          const item = await resById.json();
+          products = item ? [item] : [];
+        } else if (resById.status === 404) {
+          products = [];
+        } else {
+          throw new Error(`Сервер повернув статус: ${resById.status}`);
+        }
+      } else {
+        const res = await fetch(`${PRODUCTS_BASE}?search=${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error(`Сервер повернув статус: ${res.status}`);
 
-      const products = await res.json();
+        products = await res.json();
+      }
+
 
       if (!Array.isArray(products) || products.length === 0) {
         feedback.innerHTML = `<p class="text-warning">Нічого не знайдено за запитом: <strong>${query}</strong></p>`;
@@ -121,7 +156,7 @@ if (form && searchInput && feedback && results) {
       };
 
       // Відфільтрований список
-      const visible = products.filter(p => isAvailable(p));
+      const visible = queryIsNumeric ? products : products.filter(p => isAvailable(p));
       if (visible.length === 0) {
         feedback.innerHTML = `<p class="text-warning">За запитом <strong>${query}</strong> товари є, але наразі всі відсутні в наявності</p>`;
         return;
