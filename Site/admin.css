@@ -59,6 +59,7 @@ footer {
   padding: 1.2vw;
   font-size: 1.2vw;
   transition: background-color 0.3s ease;
+  margin-right: 1.2%;
 }
 
 .btn-custom:hover {
@@ -129,6 +130,7 @@ footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin-right: 1.2%;
 }
 
 #searchHints {
@@ -217,6 +219,7 @@ footer {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
+
 #popup-message[style*="display: none"] {
   display: none !important;
 }

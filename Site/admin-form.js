@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const photoHidden = document.getElementById("field-photo");
   const backBtn = document.getElementById("back-to-catalog");
   const title = document.querySelector(".card-body h3");
+  const nameField = document.getElementById("field-name");
 
   // Отримати параметри з URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -96,11 +97,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  if (nameField) {
+    nameField.addEventListener("input", () => {
+      const cleaned = nameField.value.replace(/\d+/g, "");
+      if (cleaned !== nameField.value) {
+        nameField.value = cleaned;
+      }
+    });
+  }
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const productData = {
-      name: document.getElementById("field-name").value.trim(),
+      name: document.getElementById("field-name").value.replace(/\d+/g, "").trim(),
       description: document.getElementById("field-description").value.trim(),
       price: parseFloat(document.getElementById("field-price").value),
       photo: (document.getElementById("field-photo").value || "").trim(),
