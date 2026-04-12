@@ -1,4 +1,83 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  const apiRoot = typeof API_BASE !== "undefined" ? API_BASE : "http://localhost:5000";
+  let favouritesSet = new Set();
+
+  const getCurrentUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const loadFavourites = async () => {
+    const user = getCurrentUser();
+    if (!user || !user.user_id) {
+      favouritesSet = new Set();
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiRoot}/favourites/${user.user_id}/ids`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const ids = await res.json();
+      favouritesSet = new Set((Array.isArray(ids) ? ids : []).map(Number));
+    } catch (err) {
+      console.warn("Failed to load favourites", err);
+      favouritesSet = new Set();
+    }
+  };
+
+  const isFavourite = (productId) => favouritesSet.has(Number(productId));
+
+  const updateFavouriteButton = (btn, liked) => {
+    const heart = btn.querySelector(".wishlist-heart");
+    if (!heart) return;
+    heart.classList.toggle("liked", liked);
+    heart.classList.toggle("unliked", !liked);
+    heart.textContent = liked ? "❤️" : "💔";
+    btn.setAttribute("aria-pressed", String(liked));
+    if (liked) {
+      heart.classList.remove("pulse-heart");
+      // restart animation
+      void heart.offsetWidth;
+      heart.classList.add("pulse-heart");
+      setTimeout(() => heart.classList.remove("pulse-heart"), 600);
+    }
+  };
+
+  const toggleFavourite = async (productId, btn) => {
+    const user = getCurrentUser();
+    if (!user || !user.user_id) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const idNum = Number(productId);
+    const liked = favouritesSet.has(idNum);
+
+    try {
+      if (liked) {
+        const res = await fetch(`${apiRoot}/favourites/${user.user_id}/${idNum}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("remove");
+        favouritesSet.delete(idNum);
+        updateFavouriteButton(btn, false);
+      } else {
+        const res = await fetch(`${apiRoot}/favourites`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.user_id, product_id: idNum })
+        });
+        if (!res.ok) throw new Error("add");
+        favouritesSet.add(idNum);
+        updateFavouriteButton(btn, true);
+      }
+    } catch (err) {
+      console.error("Failed to update favourites:", err);
+      showPopup("Не вдалося оновити вподобані");
+    }
+  };
+
   // helper to render 5 stars with half-star support
   const renderStars = (rating) => {
     const r = parseFloat(String(rating).replace(',', '.')) || 0;
@@ -17,9 +96,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
   const productList = document.getElementById("product-list");
 
+  if (productList) {
+    productList.addEventListener("click", (e) => {
+      const wishBtn = e.target.closest(".wishlist-btn");
+      if (!wishBtn) return;
+      e.preventDefault();
+      const productId = wishBtn.getAttribute("data-product-id");
+      toggleFavourite(productId, wishBtn);
+    });
+  }
+
   try {
-    const res = await fetch(`${API_BASE}/products`);
+    const res = await fetch(`${apiRoot}/products`);
     const products = await res.json();
+    await loadFavourites();
 
     const featuredIds = [2, 5, 7, 10, 12, 16, 20, 24];
     const featuredProducts = products.filter(product =>
@@ -35,6 +125,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         photoPath = product.Photo.split(',')[0].trim();
       }
 
+      const liked = isFavourite(product.product_id);
+      const heartClass = liked ? "liked" : "unliked";
+      const heartIcon = liked ? "❤️" : "💔";
+
       const card = document.createElement("div");
       card.className = "col";
       card.innerHTML = `
@@ -48,6 +142,9 @@ document.addEventListener("DOMContentLoaded", async () => {
               <small class="text-muted">(${product.Rating})</small>
             </div>
           </div>
+          <button class="wishlist-btn" type="button" data-product-id="${product.product_id}" aria-pressed="${liked}">
+            <span class="wishlist-heart ${heartClass}">${heartIcon}</span>
+          </button>
           <button class="btn btn-custom btn-sm buy-btn mx-3 mb-3" data-id="${product.product_id}">
             Купити
           </button>
@@ -78,7 +175,7 @@ document.addEventListener("click", async function (e) {
 
     try {
       btn.disabled = true;
-      const res = await fetch("http://localhost:5000/cart/quick-add", {
+      const res = await fetch(`${API_BASE}/cart/quick-add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

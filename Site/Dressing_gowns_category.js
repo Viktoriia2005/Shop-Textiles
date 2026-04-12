@@ -12,6 +12,95 @@
   }
 
   let currentProducts = [];
+  let currentPage = 1;
+  const limit = 8;
+
+  const apiRoot = typeof API_BASE !== "undefined" ? API_BASE : "http://localhost:5000";
+  let favouritesSet = new Set();
+
+  const getCurrentUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch (err) {
+      return null;
+    }
+  };
+
+  const loadFavourites = async () => {
+    const user = getCurrentUser();
+    if (!user || !user.user_id) {
+      favouritesSet = new Set();
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiRoot}/favourites/${user.user_id}/ids`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const ids = await res.json();
+      favouritesSet = new Set((Array.isArray(ids) ? ids : []).map(Number));
+    } catch (err) {
+      console.warn("Failed to load favourites", err);
+      favouritesSet = new Set();
+    }
+  };
+
+  const isFavourite = (productId) => favouritesSet.has(Number(productId));
+
+  const updateFavouriteButton = (btn, liked) => {
+    const heart = btn.querySelector(".wishlist-heart");
+    if (!heart) return;
+    heart.classList.toggle("liked", liked);
+    heart.classList.toggle("unliked", !liked);
+    heart.textContent = liked ? "❤️" : "💔";
+    btn.setAttribute("aria-pressed", String(liked));
+    if (liked) {
+      heart.classList.remove("pulse-heart");
+      // restart animation
+      void heart.offsetWidth;
+      heart.classList.add("pulse-heart");
+      setTimeout(() => heart.classList.remove("pulse-heart"), 600);
+    }
+  };
+
+  const toggleFavourite = async (productId, btn) => {
+    const user = getCurrentUser();
+    if (!user || !user.user_id) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const idNum = Number(productId);
+    const liked = favouritesSet.has(idNum);
+
+    try {
+      if (liked) {
+        const res = await fetch(`${apiRoot}/favourites/${user.user_id}/${idNum}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("remove");
+        favouritesSet.delete(idNum);
+        updateFavouriteButton(btn, false);
+      } else {
+        const res = await fetch(`${apiRoot}/favourites`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.user_id, product_id: idNum })
+        });
+        if (!res.ok) throw new Error("add");
+        favouritesSet.add(idNum);
+        updateFavouriteButton(btn, true);
+      }
+    } catch (err) {
+      console.error("Failed to update favourites:", err);
+      if (typeof showPopup === "function") showPopup("Не вдалося оновити вподобані");
+    }
+  };
+
+  let paginationWrapper = (container.parentElement && container.parentElement.querySelector(".pagination-wrapper")) || document.getElementById("paginationWrapper");
+  if (!paginationWrapper) {
+    paginationWrapper = document.createElement("div");
+    paginationWrapper.className = "pagination-wrapper mt-4 d-flex justify-content-center flex-wrap";
+    const paginationHost = container.parentElement || document.body;
+    paginationHost.appendChild(paginationWrapper);
+  }
 
   const renderStars = (rating) => {
     const r = parseFloat(String(rating).replace(",", ".")) || 0;
@@ -73,18 +162,34 @@
         }
       });
     });
-  };
+  }
 
-  const renderProducts = (products) => {
+  container.addEventListener("click", (e) => {
+    const btn = e.target.closest(".wishlist-btn");
+    if (!btn) return;
+    e.preventDefault();
+    const productId = btn.getAttribute("data-product-id");
+    toggleFavourite(productId, btn);
+  });
+
+  const renderProducts = (products, page = 1) => {
     container.innerHTML = "";
 
     if (!Array.isArray(products) || products.length === 0) {
       container.innerHTML = `<p class="text-center">Наразі немає халатів у наявності</p>`;
+      paginationWrapper.innerHTML = "";
       return;
     }
 
-    products.forEach((product) => {
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const paginatedProducts = products.slice(start, end);
+
+    paginatedProducts.forEach((product) => {
       const photoPath = String(product.Photo || "").split(",")[0]?.trim() || "";
+      const liked = isFavourite(product.product_id);
+      const heartClass = liked ? "liked" : "unliked";
+      const heartIcon = liked ? "❤️" : "💔";
 
       const card = document.createElement("div");
       card.className = "col";
@@ -101,6 +206,9 @@
               <small class="text-muted">(${product.Rating})</small>
             </div>
           </div>
+          <button class="wishlist-btn" type="button" data-product-id="${product.product_id}" aria-pressed="${liked}">
+            <span class="wishlist-heart ${heartClass}">${heartIcon}</span>
+          </button>
           <button class="btn btn-custom btn-sm buy-btn" data-product-id="${product.product_id}">
             Купити
           </button>
@@ -111,6 +219,23 @@
     });
 
     bindBuyButtons();
+    renderPagination(products.length, page);
+  };
+
+  const renderPagination = (totalItems, page) => {
+    const totalPages = Math.ceil(totalItems / limit);
+    paginationWrapper.innerHTML = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+      const pageBtn = document.createElement("button");
+      pageBtn.className = `page-link btn ${i === page ? "btn-primary" : "btn-light"} mx-1`;
+      pageBtn.textContent = i;
+      pageBtn.addEventListener("click", () => {
+        currentPage = i;
+        renderProducts(currentProducts, currentPage);
+      });
+      paginationWrapper.appendChild(pageBtn);
+    }
   };
 
   if (avatarLink) {
@@ -153,7 +278,9 @@
     const res = await fetch("http://localhost:5000/products/tag/Халат");
     const products = await res.json();
     currentProducts = Array.isArray(products) ? products : [];
-    renderProducts(currentProducts);
+    currentPage = 1;
+    await loadFavourites();
+    renderProducts(currentProducts, currentPage);
   } catch (error) {
     console.error("Помилка завантаження халатів:", error);
     container.innerHTML = `<p class="text-center text-danger">Не вдалося завантажити товари</p>`;
@@ -161,15 +288,17 @@
 
   if (sortAscBtn) {
     sortAscBtn.addEventListener("click", () => {
-      const sorted = [...currentProducts].sort((a, b) => Number(a.Price) - Number(b.Price));
-      renderProducts(sorted);
+      currentProducts = [...currentProducts].sort((a, b) => Number(a.Price) - Number(b.Price));
+      currentPage = 1;
+      renderProducts(currentProducts, currentPage);
     });
   }
 
   if (sortDescBtn) {
     sortDescBtn.addEventListener("click", () => {
-      const sorted = [...currentProducts].sort((a, b) => Number(b.Price) - Number(a.Price));
-      renderProducts(sorted);
+      currentProducts = [...currentProducts].sort((a, b) => Number(b.Price) - Number(a.Price));
+      currentPage = 1;
+      renderProducts(currentProducts, currentPage);
     });
   }
 });

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ua">
 
 <head>
@@ -29,11 +29,12 @@
             </div>
             <div class="col-md-2 text-end">
                 <div id="avatarLink" class="user-avatar-wrapper position-relative me-3">
-                    <img src="img/avatar.png" alt="Акаунт" id="avatarIcon" width="40">
+                    <img src="img/avatar.png" alt="Користувач" id="avatarIcon" width="40">
                     <div id="userNameRibbon" class="username-ribbon"></div>
-                </div>
+                </div>`n <div id="paginationWrapper"
+                    class="pagination-wrapper mt-4 d-flex justify-content-center flex-wrap"></div>
                 <a href="Cart.html" class="me-3" id="cart-icon">
-                    <img src="img/cart.png" alt="Кошик" width="40">
+                    <img src="img/cart.png" alt="Корзинка" width="40">
                 </a>
             </div>
         </div>
@@ -56,7 +57,7 @@
     </nav>
     <div class="d-flex justify-content-end">
         <form id="searchForm" class="search-box d-flex my-3" role="search">
-            <input id="searchInput" class="form-control me-2" type="search" name="query" placeholder="Пошук товару..."
+            <input id="searchInput" class="form-control me-2" type="search" name="query" placeholder="Шукати товари..."
                 aria-label="Search" required>
             <button class="btn btn-custom" type="submit">Знайти</button>
         </form>
@@ -64,11 +65,11 @@
     <div class="d-flex justify-content-end mt-3 mb-3">
         <div class="dropdown">
             <button class="btn btn-link p-0" id="sortMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="img/sort.png" alt="Сортувати" class="sort-icon">
+                <img src="img/sort.png" alt="Сортування" class="sort-icon">
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortMenuButton">
-                <li><button class="dropdown-item" id="sortAsc">Ціна: за зростанням</button></li>
-                <li><button class="dropdown-item" id="sortDesc">Ціна: за спаданням</button></li>
+                <li><button class="dropdown-item" id="sortAsc">Ціна: зростання</button></li>
+                <li><button class="dropdown-item" id="sortDesc">Ціна: спадання</button></li>
             </ul>
         </div>
     </div>
@@ -83,8 +84,7 @@
                     <li><a href="Linens.html" class="text-dark text-decoration-none">Постільна білизна</a></li>
                     <li><a href="Sauna_towels.html" class="text-dark text-decoration-none">Рушники (баня)</a>
                     </li>
-                    <li><a href="Kitchen_towels.html" class="text-dark text-decoration-none">Рушники
-                            (кухня)</a></li>
+                    <li><a href="Kitchen_towels.html" class="text-dark text-decoration-none">Рушники (кухня)</a></li>
                     <li><a href="Tablecloths.html" class="text-dark text-decoration-none">Скатертини</a></li>
                     <li><a href="Dressing_gowns.html" class="text-dark text-decoration-none">Халати</a></li>
                 </ul>
@@ -92,15 +92,16 @@
             <section class="col-md-9 pt-3">
                 <div id="veilList" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                 </div>
+                <div id="paginationWrapper" class="pagination-wrapper mt-4 d-flex justify-content-center flex-wrap">
+                </div>
             </section>
     </main>
     <footer class="bg-dark text-dark py-3 mt-auto">
         <div class="container text-center">
-            <p>&copy; <span id="year"></span> Moya.domivka_ua. Усі права захищені.</p>
+            <p>&copy; <span id="year"></span> Moya.domivka_ua. Усі права захищено.</p>
             <div class="footer-links d-flex flex-column align-items-center">
                 <a href="Home_page.html" class="text-dark text-decoration-none mb-2">Головна</a>
-                <a href="Delivery_and_payment.html" class="text-dark text-decoration-none mb-2">Доставка й
-                    оплата</a>
+                <a href="Delivery_and_payment.html" class="text-dark text-decoration-none mb-2">Доставка й оплата</a>
                 <a href="About.html" class="text-dark text-decoration-none mb-2">Про нас</a>
                 <a href="Contact.html" class="text-dark text-decoration-none mb-2">Контакти</a>
             </div>
