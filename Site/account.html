@@ -54,7 +54,7 @@
         <ul>
           <li style="font-weight: bold; background-color: #DEB887;">Покупки</li>
           <li><a href="my_order.html" class="text-dark text-decoration-none">Мої замовлення</a></li>
-          <li>Вибране</li>
+          <li><a href="my_favourites.html" class="text-dark text-decoration-none">Вибране</a></li>
 
           <li style="font-weight: bold; background-color: #DEB887;">Комунікації</li>
           <li>Сповіщення</li>
@@ -74,8 +74,34 @@
 
       <div class="content">
         <h2 id="welcome">Ласкаво просимо!</h2>
-        <p>Тут буде відображатися ваша особиста інформація, історія замовлень, обране та інші дані.</p>
-        <p>Цей блок можна адаптувати під динамічний контент з бази даних.</p>
+
+        <section class="slider-section">
+          <div class="slider-header">
+            <h3>Ваші замовлені товари</h3>
+            <div class="slider-controls">
+              <button type="button" class="slider-btn" data-target="orderedSliderTrack" data-direction="left">‹</button>
+              <button type="button" class="slider-btn" data-target="orderedSliderTrack" data-direction="right">›</button>
+            </div>
+          </div>
+          <div class="slider-frame">
+            <div class="slider-track" id="orderedSliderTrack"></div>
+          </div>
+          <p class="slider-empty" id="orderedEmpty">Тут будуть відображатися ваші вподобання та замовлені товари</p>
+        </section>
+
+        <section class="slider-section">
+          <div class="slider-header">
+            <h3>Ваші вподобані товари</h3>
+            <div class="slider-controls">
+              <button type="button" class="slider-btn" data-target="favouriteSliderTrack" data-direction="left">‹</button>
+              <button type="button" class="slider-btn" data-target="favouriteSliderTrack" data-direction="right">›</button>
+            </div>
+          </div>
+          <div class="slider-frame">
+            <div class="slider-track" id="favouriteSliderTrack"></div>
+          </div>
+          <p class="slider-empty" id="favouriteEmpty">Тут будуть відображатися ваші вподобання та замовлені товари</p>
+        </section>
       </div>
     </div>
   </main>
@@ -108,10 +134,52 @@
               <label for="editEmail" class="form-label">Електронна пошта</label>
               <input type="email" class="form-control" id="editEmail" required>
             </div>
+            <div class="mb-2">
+              <button type="button" class="btn btn-link p-0 text-dark text-decoration-none" id="openPasswordModal">
+                Змінити пароль
+              </button>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Закрити</button>
             <button type="submit" class="btn btn-custom">Зберегти зміни</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="passwordForm">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="passwordLabel">Зміна пароля</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Теперішній пароль</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="currentPassword" required>
+                <button type="button" class="btn btn-outline-secondary toggle-pass" data-target="currentPassword">
+                  Показати
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">Новий пароль</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="newPassword" required>
+                <button type="button" class="btn btn-outline-secondary toggle-pass" data-target="newPassword">
+                  Показати
+                </button>
+              </div>
+              <div class="form-text">Мінімум 6 символів.</div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-custom" data-bs-dismiss="modal">Закрити</button>
+            <button type="submit" class="btn btn-custom">Оновити пароль</button>
           </div>
         </form>
       </div>
