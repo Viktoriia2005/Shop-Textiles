@@ -6,6 +6,7 @@ import usersRouter from './users.js';
 import productsRouter from './products.js';
 import cartRouter from './cart.js';
 import ordersRouter from './orders.js';
+import favouritesRouter from './favourites.js';
 
 
 
@@ -29,6 +30,7 @@ app.use('/users', usersRouter);
 app.use('/products', productsRouter);
 app.use('/cart', cartRouter);
 app.use('/orders', ordersRouter);
+app.use('/favourites', favouritesRouter);
 
 app.get('/', (req, res) => {
     res.send('Сервер текстильного магазину працює 🧵');
