@@ -117,7 +117,9 @@ function buildOrderCard(order, { isArchive = false } = {}) {
     : `<span class="badge text-bg-secondary">${order.payment_method || 'card'}</span>`;
 
   const itemsHtml = renderItems(order.items, { showUnitPrice: isArchive });
-  const totalHtml = `Сума: ${Number(order.total || order.amount || 0)} грн`;
+  const totalText = `Сума: ${Number(order.total || order.amount || 0)} грн`;
+  const totalHtml = `<div class="order-total">${totalText}</div>`;
+  const totalSummaryHtml = `<div class="order-total order-total-summary">${totalText}</div>`;
 
   const itemsCount = Array.isArray(order.items) ? order.items.length : 0;
 
@@ -125,18 +127,20 @@ function buildOrderCard(order, { isArchive = false } = {}) {
     ? itemsCount <= 1
       ? `
           <div class="order-items-list mt-3">${itemsHtml}</div>
-          <div class="order-total">${totalHtml}</div>
+          ${totalHtml}
         `
       : `
-          <button class="btn btn-custom order-details-toggle" type="button" aria-expanded="false">Деталі</button>
+          <div class="order-summary-row">
+            ${totalSummaryHtml}
+            <button class="btn btn-custom order-details-toggle" type="button" aria-expanded="false">Деталі</button>
+          </div>
           <div class="order-archive-details d-none">
             <div class="order-items-list mt-3">${itemsHtml}</div>
-            <div class="order-total">${totalHtml}</div>
           </div>
         `
     : `
           <div class="order-items-list mt-3">${itemsHtml}</div>
-          <div class="order-total">${totalHtml}</div>
+          ${totalHtml}
       `;
 
   return `
@@ -221,7 +225,49 @@ async function loadOrders() {
   }
 }
 
+function initializeAvatarAccountLink() {
+  const avatarLink = document.getElementById('avatarLink');
+  const ribbon = document.getElementById('userNameRibbon');
+
+  if (!avatarLink || !ribbon) return;
+
+  avatarLink.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const rawUser = localStorage.getItem('user');
+    let user = null;
+
+    try {
+      user = JSON.parse(rawUser);
+    } catch (err) {
+      console.warn('Некоректний user у localStorage');
+    }
+
+    if (user && typeof user.user_id === 'number') {
+      window.location.href = 'account.html';
+    } else {
+      window.location.href = 'register.html';
+    }
+  });
+
+  const rawUser = localStorage.getItem('user');
+  let user = null;
+
+  try {
+    user = JSON.parse(rawUser);
+  } catch (err) {
+    console.warn('Некоректний user у localStorage');
+  }
+
+  if (user && user.name) {
+    ribbon.textContent = `Привіт, ${user.name}!`;
+  } else {
+    ribbon.style.display = 'none';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  initializeAvatarAccountLink();
   showPaymentBanner();
   await loadOrders();
 
