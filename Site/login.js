@@ -8,6 +8,24 @@ async function loginUser(data) {
   return await res.json();
 }
 
+function validatePassword(password) {
+  if (password.length < 6) {
+    return 'Пароль має містити щонайменше 6 символів';
+  }
+  if (!/[a-zA-Z]/.test(password)) {
+    return 'Пароль має містити щонайменше одну латинську букву (A-Z або a-z)';
+  }
+  return null;
+}
+
+function validateEmail(email) {
+  const emailRegex = /^[\w.-]+@(gmail|outlook|ukr.net|yahoo)\.com$/;
+  if (!emailRegex.test(email)) {
+    return 'Пошта має бути у форматі: ім\'я@(gmail|outlook|ukr.net|yahoo).com';
+  }
+  return null;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('loginForm');
   const messageDiv = document.getElementById('message');
@@ -17,6 +35,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const email = form.email.value.trim();
     const password = form.password.value;
+
+    // 🔐 Валідація email
+    const emailError = validateEmail(email);
+    if (emailError) {
+      messageDiv.textContent = emailError;
+      messageDiv.className = 'text-danger';
+      return;
+    }
+
+    // 🔐 Валідація пароля
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      messageDiv.textContent = passwordError;
+      messageDiv.className = 'text-danger';
+      return;
+    }
 
     try {
       const result = await loginUser({ email, password });
