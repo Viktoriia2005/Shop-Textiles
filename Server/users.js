@@ -141,6 +141,48 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// 🔒 Оновлення пароля користувача
+router.put('/:id/password', async (req, res) => {
+    const userId = req.params.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+        return res.status(400).json({ error: 'Потрібні currentPassword та newPassword' });
+    }
+
+    if (String(newPassword).length < 6) {
+        return res.status(400).json({ error: 'Пароль має містити щонайменше 6 символів' });
+    }
+
+    try {
+        const [rows] = await db.execute(
+            'SELECT Password FROM users WHERE user_id = ?',
+            [userId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Користувача не знайдено' });
+        }
+
+        const user = rows[0];
+        const match = await bcrypt.compare(currentPassword, user.Password);
+        if (!match) {
+            return res.status(401).json({ error: 'Невірний поточний пароль' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+        await db.execute(
+            'UPDATE users SET Password = ? WHERE user_id = ?',
+            [hashedPassword, userId]
+        );
+
+        res.json({ message: 'Пароль успішно оновлено' });
+    } catch (error) {
+        console.error('❌ Помилка оновлення пароля:', error);
+        res.status(500).json({ error: 'Помилка сервера при оновленні пароля' });
+    }
+});
+
 // 🚪 Вихід (тільки клієнтська дія)
 router.post('/logout', (req, res) => {
     // Якщо використовуєш сесії — тут можна очистити
