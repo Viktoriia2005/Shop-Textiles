@@ -78,15 +78,60 @@ footer {
   padding: 0;
 }
 
-.sidebar li {
+.sidebar-heading {
+  padding: 1vw;
+  border-bottom: 0.1vw solid #DEB887;
+  cursor: pointer;
+  font-size: 1.2vw;
+  font-weight: bold;
+  background-color: #DEB887;
+  position: relative;
+}
+
+.sidebar-heading::after {
+  content: "▼";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-heading.open::after {
+  transform: translateY(-50%) rotate(-180deg);
+}
+
+.sidebar-heading:hover {
+  background-color: #be9054;
+}
+
+.sidebar-submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: none;
+}
+
+.sidebar-submenu.show {
+  display: block;
+}
+
+.sidebar-submenu li {
   padding: 1vw;
   border-bottom: 0.1vw solid #DEB887;
   cursor: pointer;
   font-size: 1.2vw;
 }
 
-.sidebar li:hover {
-  background-color: #be9054;
+.sidebar-submenu li:hover {
+  background-color: #cea86e;
+}
+
+.sidebar-submenu li>a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
 }
 
 .content {
@@ -103,6 +148,10 @@ footer {
   font-weight: bold;
   color: #A0522D;
   font-size: 1.2vw;
+}
+
+.logout:hover {
+  background-color: #cea86e;
 }
 
 /* custom button used across site */

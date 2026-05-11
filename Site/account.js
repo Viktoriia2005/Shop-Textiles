@@ -167,6 +167,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  document.querySelectorAll('.sidebar-heading').forEach((heading) => {
+    heading.addEventListener('click', () => {
+      const submenu = heading.nextElementSibling;
+      if (!submenu || !submenu.classList.contains('sidebar-submenu')) return;
+      submenu.classList.toggle('show');
+      heading.classList.toggle('open');
+    });
+  });
+
   await loadAccountSliders(userData, apiRoot);
 
   const yearSpan = document.getElementById("year");

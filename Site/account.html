@@ -52,21 +52,30 @@
       <div class="sidebar">
         <h3>👤 Мій профіль</h3>
         <ul>
-          <li style="font-weight: bold; background-color: #DEB887;">Покупки</li>
-          <li><a href="my_order.html" class="text-dark text-decoration-none">Мої замовлення</a></li>
-          <li><a href="my_favourites.html" class="text-dark text-decoration-none">Вибране</a></li>
+          <li class="sidebar-heading">Покупки</li>
+          <ul class="sidebar-submenu" id="purchasesMenu">
+            <li><a href="my_order.html" class="text-dark text-decoration-none">Мої замовлення</a></li>
+            <li><a href="my_favourites.html" class="text-dark text-decoration-none">Вибране</a></li>
+          </ul>
 
-          <li style="font-weight: bold; background-color: #DEB887;">Комунікації</li>
-          <li>Сповіщення</li>
+          <li class="sidebar-heading">Комунікації</li>
+          <ul class="sidebar-submenu" id="communicationsMenu">
+            <li>Сповіщення</li>
+          </ul>
 
-          <li style="font-weight: bold; background-color: #DEB887;">Особиста інформація</li>
-          <li>Мої адреси</li>
-          <li>Мої картки</li>
-          <li id="personalDataLink" style="cursor: pointer;">Персональні дані</li>
+          <li class="sidebar-heading">Особиста інформація</li>
+          <ul class="sidebar-submenu" id="personalInfoMenu">
+            <li>Мої адреси</li>
+            <li>Мої картки</li>
+            <li id="personalDataLink" style="cursor: pointer;">Персональні дані</li>
+          </ul>
 
-          <li style="font-weight: bold; background-color: #DEB887;">Додаток</li>
-          <li>Підтримка</li>
-          <li>Угода та конфіденційність</li>
+          <li class="sidebar-heading">Додаток</li>
+          <ul class="sidebar-submenu" id="appMenu">
+            <li>Підтримка</li>
+            <li>Угода та конфіденційність</li>
+          </ul>
+
           <li class="logout">Вийти</li>
         </ul>
 
