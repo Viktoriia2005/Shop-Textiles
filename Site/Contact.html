@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ua">
 
 <head>
@@ -28,6 +28,10 @@
                 <h1 class="mb-0">Moya.domivka_ua</h1>
             </div>
             <div class="col-md-2 text-end">
+                <div id="avatarLink" class="user-avatar-wrapper position-relative me-3" role="button" aria-label="Акаунт">
+                    <img src="img/avatar.png" alt="Акаунт" width="40">
+                    <div id="userNameRibbon" class="username-ribbon"></div>
+                </div>
                 <a href="Cart.html" class="me-3">
                     <img src="img/cart.png" alt="Корзинка" width="40">
                 </a>
@@ -35,8 +39,8 @@
         </div>
     </header>
     <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <div class="container">
-            <ul class="navbar-nav mx-auto fs-5">
+        <div class="container nav-search-row">
+            <ul class="navbar-nav nav-links fs-5">
                 <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
                         href="Home_page.html">Головна</a></li>
                 <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
@@ -45,8 +49,23 @@
                         нас</a>
                 </li>
             </ul>
+                        <form id="searchForm" class="search-box d-flex align-items-center" role="search">
+                <div class="search-input-wrap position-relative">
+                    <input id="searchInput" class="form-control" type="search" name="query"
+                        placeholder="Шукати..." aria-label="Пошук" required>
+                    <div id="searchHints" class="list-group position-absolute w-100"></div>
+                </div>
+                <button class="search-submit" type="submit" aria-label="Шукати">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="6.5"></circle>
+                        <path d="M16 16L21 21"></path>
+                    </svg>
+                </button>
+            </form>
         </div>
     </nav>
+    <div id="searchFeedback" class="mt-2 text-end"></div>
+    <div id="searchResults" class="container row g-4 mt-3 mx-auto"></div>
     <main>
         <section class="contact-card my-5">
             <div class="container">
@@ -101,6 +120,11 @@
             }
         });
     </script>
+    <script src="config.js"></script>
+    <script src="searchForm.js"></script>
+    <script src="account-link.js"></script>
 </body>
 
 </html>
+
+

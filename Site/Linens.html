@@ -39,8 +39,8 @@
         </div>
     </header>
     <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <div class="container">
-            <ul class="navbar-nav mx-auto fs-5">
+        <div class="container nav-search-row">
+            <ul class="navbar-nav nav-links fs-5">
                 <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
                         href="Home_page.html">Головна</a></li>
                 <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
@@ -52,15 +52,21 @@
                         href="Contact.html">Контакти</a>
                 </li>
             </ul>
+                        <form id="searchForm" class="search-box d-flex align-items-center" role="search">
+                <div class="search-input-wrap position-relative">
+                    <input id="searchInput" class="form-control" type="search" name="query"
+                        placeholder="Шукати..." aria-label="Пошук" required>
+                    <div id="searchHints" class="list-group position-absolute w-100"></div>
+                </div>
+                <button class="search-submit" type="submit" aria-label="Шукати">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="6.5"></circle>
+                        <path d="M16 16L21 21"></path>
+                    </svg>
+                </button>
+            </form>
         </div>
     </nav>
-    <div class="d-flex justify-content-end">
-        <form id="searchForm" class="search-box d-flex my-3" role="search">
-            <input id="searchInput" class="form-control me-2" type="search" name="query" placeholder="Пошук товару..."
-                aria-label="Search" required>
-            <button class="btn btn-custom" type="submit">Знайти</button>
-        </form>
-    </div>
     <div class="d-flex justify-content-end mt-3 mb-3">
         <div class="dropdown">
             <button class="btn btn-link p-0" id="sortMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -117,3 +123,5 @@
 </body>
 
 </html>
+
+
