@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const user = parseUser();
     if (isAuthenticated(user)) {
-      window.location.href = 'account.html';
+      window.location.href = user && user.role === 'admin' ? 'admin.html' : 'account.html';
     } else {
       window.location.href = 'register.html';
     }
@@ -43,13 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Встановлення імені користувача
   const user = parseUser();
   if (user && user.name) {
     ribbon.textContent = `Привіт, ${user.name}!`;
-    ribbon.style.display = 'block';
-    avatarLink.setAttribute('aria-label', `Акаунт користувача ${user.name}`);
   } else {
     ribbon.style.display = 'none';
-    avatarLink.setAttribute('aria-label', 'Увійти або зареєструватися');
   }
 });
