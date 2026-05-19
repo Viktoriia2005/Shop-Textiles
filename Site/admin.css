@@ -32,7 +32,7 @@ footer {
   height: 25vh;
   object-fit: cover;
   transition: transform 0.3s ease;
-  border-radius: 6px 6px 0 0;
+  border-radius: 0.375rem 0.375rem 0 0;
 }
 
 .card {
@@ -44,7 +44,7 @@ footer {
 
 .card:hover {
   transform: translateY(-2%);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
 }
 
 .card-body {
@@ -55,7 +55,7 @@ footer {
   background-color: #a0522d;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   padding: 1.2vw;
   font-size: 1.2vw;
   transition: background-color 0.3s ease;
@@ -83,7 +83,7 @@ footer {
   color: #ad6836;
   font-weight: 500;
   padding: 0.6vw 1.2vw;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 0.1vw solid #d8a47f;
   background-color: transparent;
   transition: color 0.4s ease;
@@ -194,7 +194,7 @@ footer {
   background-color: #a0522d;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   padding: 5.5% 13%;
   font-size: 1.2vw;
   transition: background-color 0.3s ease;
@@ -239,10 +239,10 @@ footer {
   border-radius: 50%;
   width: 5%;
   height: 8%;
-  min-width: 60px;
-  min-height: 60px;
-  max-width: 80px;
-  max-height: 80px;
+  min-width: 3.75rem;
+  min-height: 3.75rem;
+  max-width: 5rem;
+  max-height: 5rem;
   font-size: 2rem;
   display: flex;
   align-items: center;
