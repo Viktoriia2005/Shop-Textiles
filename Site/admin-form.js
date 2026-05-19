@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const photoPath = document.getElementById("photo-file-path");
   const photoPreview = document.getElementById("photo-preview");
   const photoHidden = document.getElementById("field-photo");
+  const categorySelect = document.getElementById("field-category");
   const backBtn = document.getElementById("back-to-catalog");
   const title = document.querySelector(".card-body h3");
   const nameField = document.getElementById("field-name");
@@ -13,6 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Отримати параметри з URL
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get("id");
+
+  await loadCategories();
 
   if (productId) {
     // Режим редагування
@@ -37,6 +40,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       const previewSrc = product.Photo ?? product.photo ?? "";
       if (previewSrc) setPhotoPreview(previewSrc);
+      if (categorySelect) {
+        categorySelect.value = String(product.category_id ?? product.categoryId ?? "");
+      }
       document.getElementById("field-quantity").value = product.Stock ?? product.stock ?? "";
     } catch (err) {
       console.error("Помилка завантаження товару:", err);
@@ -45,6 +51,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Режим додавання
     title.textContent = "Додавання товару";
     saveBtn.textContent = "Додати";
+  }
+
+  async function loadCategories() {
+    if (!categorySelect) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/products/categories`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const categories = await res.json();
+
+      categorySelect.innerHTML = '<option value="">Оберіть категорію</option>';
+      if (Array.isArray(categories)) {
+        categories.forEach((category) => {
+          const option = document.createElement('option');
+          option.value = String(category.category_id ?? category.categoryId ?? '');
+          option.textContent = category.name_category ?? category.nameCategory ?? '';
+          categorySelect.appendChild(option);
+        });
+      }
+    } catch (err) {
+      console.error('Помилка завантаження категорій:', err);
+      categorySelect.innerHTML = '<option value="">Не вдалося завантажити категорії</option>';
+    }
   }
 
   // show temporary flash message using the existing popup element
@@ -115,6 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       price: parseFloat(document.getElementById("field-price").value),
       photo: (document.getElementById("field-photo").value || "").trim(),
       stock: parseInt(document.getElementById("field-quantity").value) || 0,
+      category_id: parseInt(categorySelect?.value, 10) || 0,
     };
 
     try {
