@@ -201,11 +201,13 @@
         card.className = "col";
         card.innerHTML = `
           <div class="card h-100">
-            <a href="#">
-              <img src="${photoPath}" class="card-img-top" alt="${product.Name}">
-            </a>
-            <div class="card-body text-center">
-              <h5 class="card-title">${product.Name}</h5>
+              <a href="Product.html?id=${product.product_id}">
+                <img src="${photoPath}" class="card-img-top" alt="${product.Name}">
+              </a>
+              <div class="card-body text-center">
+              <h5 class="card-title">
+                <a href="Product.html?id=${product.product_id}" class="text-dark text-decoration-none">${product.Name}</a>
+              </h5>
               <p class="card-price text-black fw-bold mb-1">₴ ${product.Price}</p>
               <div class="mb-2 d-flex align-items-center justify-content-center gap-2">
                 <div class="rating-stars">${renderStars(product.Rating)}</div>
@@ -282,7 +284,7 @@
   }
 
   try {
-    const res = await fetch("http://localhost:5000/products/tag/Декоративна");
+    const res = await fetch(`${API_BASE}/products/category/2`);
     const products = await res.json();
     currentProducts = Array.isArray(products) ? products : [];
     currentPage = 1;

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ua">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="img/site.webmanifest">
+    <title>Товар</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:wght@300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Product.css">
+</head>
+
+<body>
+    <header class="container-fluid py-3 border-bottom site-header">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-start">
+                <img src="img/Icon_Shop.png" alt="Логотип" width="135" height="135">
+            </div>
+            <div class="col-md-8 text-center">
+                <h1 class="mb-0" id="pageTitle">Товар</h1>
+            </div>
+            <div class="col-md-2 text-end header-icons">
+                <div id="avatarLink" class="user-avatar-wrapper position-relative me-3">
+                    <img src="img/avatar.png" alt="Акаунт" id="avatarIcon" width="40">
+                    <div id="userNameRibbon" class="username-ribbon"></div>
+                </div>
+                <a href="Cart.html" class="me-3" id="cart-icon">
+                    <img src="img/cart.png" alt="Кошик" width="40">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <div class="container nav-search-row">
+            <ul class="navbar-nav nav-links fs-5">
+                <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
+                        href="Home_page.html">Головна</a></li>
+                <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
+                        href="Delivery_and_payment.html">Доставка й оплата</a></li>
+                <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none" href="About.html">Про
+                        нас</a></li>
+                <li class="nav-item mx-3"><a class="nav-link text-dark text-decoration-none"
+                        href="Contact.html">Контакти</a></li>
+            </ul>
+            <form id="searchForm" class="search-box d-flex align-items-center" role="search">
+                <div class="search-input-wrap position-relative">
+                    <input id="searchInput" class="form-control" type="search" name="query" placeholder="Шукати..."
+                        aria-label="Пошук" required>
+                    <div id="searchHints" class="list-group position-absolute w-100"></div>
+                </div>
+                <button class="search-submit" type="submit" aria-label="Шукати">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="6.5"></circle>
+                        <path d="M16 16L21 21"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="catalog-bar">
+        <div class="container catalog-links">
+            <span class="catalog-title">Каталог</span>
+            <a href="Blankets.html">Ковдри</a>
+            <a href="Pillows.html">Подушки</a>
+            <a href="Veil.html">Покривала</a>
+            <a href="Linens.html">Постільна білизна</a>
+            <a href="Dressing_gowns.html">Халати</a>
+            <a href="Tablecloths.html">Скатертини</a>
+            <a href="Kitchen_towels.html">Кухонні рушники</a>
+            <a href="Sauna_towels.html">Банні рушники</a>
+        </div>
+    </div>
+
+    <main class="product-page">
+        <div class="container py-4 py-lg-5">
+            <div id="searchFeedback" class="text-end mb-3"></div>
+
+            <section class="product-shell">
+                <div class="product-topbar">
+                    <span class="product-code">Код товару: завантаження...</span>
+                </div>
+
+                <div class="row g-4 g-xl-5 align-items-start">
+                    <div class="col-lg-6">
+                        <div class="gallery-panel">
+                            <div class="gallery-stage">
+                                <button type="button" class="gallery-arrow prev" id="prevImage"
+                                    aria-label="Попереднє фото">
+                                    &#10094;
+                                </button>
+                                <button type="button" class="gallery-arrow next" id="nextImage"
+                                    aria-label="Наступне фото">
+                                    &#10095;
+                                </button>
+                                <img id="mainProductImage"
+                                    src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+                                    alt="Фото товару">
+                            </div>
+                            <div class="gallery-thumbs" id="galleryThumbs"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="product-info-card">
+                            <div class="product-badge" id="productStockBadge">Завантаження...</div>
+                            <h2 class="product-name" id="productName">Завантаження товару...</h2>
+
+                            <div class="product-price-row">
+                                <div>
+                                    <div class="price-caption">Ціна</div>
+                                    <div class="product-price" id="productPrice">-- ₴</div>
+                                </div>
+                                <div class="product-rating" id="productRating" aria-label="Рейтинг товару">-- / 5</div>
+                            </div>
+
+                            <div class="product-actions">
+                                <div class="quantity-box">
+                                    <span class="quantity-label">Кількість</span>
+                                    <div class="quantity-controls">
+                                        <button type="button" class="qty-btn" id="decreaseQty"
+                                            aria-label="Зменшити кількість">-</button>
+                                        <input id="quantityInput" type="number" min="1" value="1" inputmode="numeric"
+                                            aria-label="Кількість товару">
+                                        <button type="button" class="qty-btn" id="increaseQty"
+                                            aria-label="Збільшити кількість">+</button>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="buy-button" id="addToCartButton">
+                                    Додати в кошик
+                                </button>
+                            </div>
+
+                            <div class="product-description">
+                                <h3>Опис товару</h3>
+                                <p id="productDescription">
+                                    Завантаження опису товару...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container text-center">
+            <p>&copy; <span id="year"></span> Moya.domivka_ua. Усі права захищені.</p>
+            <div class="footer-links">
+                <a href="Home_page.html">Головна</a>
+                <a href="Delivery_and_payment.html">Доставка й оплата</a>
+                <a href="About.html">Про нас</a>
+                <a href="Contact.html">Контакти</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="popup-message" style="display: none;"></div>
+
+    <script src="config.js"></script>
+    <script src="account-link.js"></script>
+    <script src="searchForm.js"></script>
+    <script src="Product.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
