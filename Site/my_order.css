@@ -24,7 +24,7 @@ main {
   height: 25vh;
   object-fit: cover;
   transition: transform 0.3s ease;
-  border-radius: 6px 6px 0 0;
+  border-radius: 0.375rem 0.375rem 0 0;
 }
 
 .card {
@@ -40,7 +40,7 @@ main {
 
 .card:hover {
   transform: translateY(-2%);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
 }
 
 aside {
@@ -102,12 +102,12 @@ footer {
   transform: translate(-100%, -50%);
   background-color: #ffffff;
   color: #834906;
-  padding: 6px 12px;
-  border-radius: 0 8px 8px 0;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0 0.5rem 0.5rem 0;
   white-space: nowrap;
   font-weight: 500;
   font-size: 0.85rem;
-  box-shadow: 0 2px 6px rgba(61, 59, 59, 0.534);
+  box-shadow: 0 0.125rem 0.375rem rgba(61, 59, 59, 0.534);
   transition: transform 0.3s ease, opacity 0.3s ease;
   pointer-events: none;
   opacity: 0;
@@ -201,17 +201,17 @@ footer {
 
 .order-item-row {
   display: grid;
-  grid-template-columns: 64px 1fr auto;
+  grid-template-columns: 4rem 1fr auto;
   gap: 0.75rem;
   align-items: center;
   padding: 0.35rem 0;
 }
 
 .order-item-photo {
-  width: 64px;
-  height: 64px;
+  width: 4rem;
+  height: 4rem;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0.5rem;
 }
 
 .order-item-name {
@@ -256,11 +256,11 @@ footer {
 
 .timeline-step {
   border: 1px solid #d7b08a;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   padding: 0.55rem;
   background: #fff8ef;
   text-align: center;
-  min-height: 110px;
+  min-height: 6.875rem;
 }
 
 .timeline-step.pending {
@@ -270,7 +270,7 @@ footer {
 .timeline-step.active {
   background: #f3dfc9;
   border-color: #b07a3a;
-  box-shadow: 0 0 0 2px rgba(176, 122, 58, 0.15);
+  box-shadow: 0 0 0 0.125rem rgba(176, 122, 58, 0.15);
 }
 
 .timeline-step.done {
@@ -291,7 +291,7 @@ footer {
 .payment-failed-note {
   background: #fff1f1;
   border: 1px solid #e0a8a8;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   padding: 0.8rem;
   font-size: 0.95rem;
 }

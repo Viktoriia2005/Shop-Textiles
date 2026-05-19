@@ -193,12 +193,14 @@ if (form && searchInput && feedback && results) {
         const productId = product.product_id || product.id || product.ProductId || product.productId;
         card.innerHTML = `
             <div class="card h-100">
-              <a href="#">
+              <a href="Product.html?id=${productId}">
                 <img src="${photoPath}" class="card-img-top" alt="${name}">
               </a>
               <div class="card-body text-center d-flex flex-column justify-content-between">
                 <div>
-                  <h5 class="card-title">${name}</h5>
+                  <h5 class="card-title">
+                    <a href="Product.html?id=${productId}" class="text-dark text-decoration-none">${name}</a>
+                  </h5>
                   <p class="card-price text-black fw-bold mb-1">₴ ${price}</p>
                   <div class="mb-2 d-flex align-items-center justify-content-center gap-2">
                     <div class="rating-stars">${renderStars(product.Rating || product.rating)}</div>
