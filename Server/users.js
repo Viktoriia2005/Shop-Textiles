@@ -2,6 +2,7 @@
 import express from 'express';
 import { db } from './db.js';
 import bcrypt from 'bcrypt';
+import { requireRole } from './auth.js';
 
 const router = express.Router();
 const saltRounds = 10;

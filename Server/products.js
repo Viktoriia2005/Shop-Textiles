@@ -1,6 +1,7 @@
 //products.js
 import express from 'express';
 import { db } from './db.js';
+import { requireRole } from './auth.js';
 
 const router = express.Router();
 
@@ -84,7 +85,7 @@ router.get('/tag/:keyword', async (req, res) => {
 
     try {
         const [products] = await db.execute(
-            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock 
+            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
        FROM products 
        WHERE stock > 0 AND (
          LOWER(name) LIKE ? OR LOWER(description) LIKE ?
@@ -99,12 +100,87 @@ router.get('/tag/:keyword', async (req, res) => {
     }
 });
 
+router.get('/categories', async (req, res) => {
+    try {
+        const [rows] = await db.execute(
+            `SELECT category_id, name_category FROM categories ORDER BY category_id`
+        );
+        res.json(rows);
+    } catch (error) {
+        console.error('❌ Помилка отримання категорій:', error);
+        res.status(500).json({ error: 'Не вдалося отримати категорії' });
+    }
+});
+
+router.get('/category/:id', async (req, res) => {
+    const categoryId = Number(req.params.id);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+        return res.status(400).json({ error: 'Некоректний category_id' });
+    }
+
+    try {
+        const [products] = await db.execute(
+            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
+       FROM products
+       WHERE stock > 0 AND category_id = ?`,
+            [categoryId]
+        );
+
+        res.json(products);
+    } catch (error) {
+        console.error('❌ Помилка отримання товарів за категорією:', error);
+        res.status(500).json({ error: 'Не вдалося отримати товари за категорією' });
+    }
+});
+
+router.get('/category_id/:id', async (req, res) => {
+    const categoryId = Number(req.params.id);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+        return res.status(400).json({ error: 'Некоректний category_id' });
+    }
+
+    try {
+        const [products] = await db.execute(
+            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
+       FROM products
+       WHERE stock > 0 AND category_id = ?`,
+            [categoryId]
+        );
+
+        res.json(products);
+    } catch (error) {
+        console.error('❌ Помилка отримання товарів за категорією (alias):', error);
+        res.status(500).json({ error: 'Не вдалося отримати товари за категорією' });
+    }
+});
+
+router.get('/category', async (req, res) => {
+    const categoryId = Number(req.query.id);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+        return res.status(400).json({ error: 'Некоректний category_id' });
+    }
+
+    try {
+        const [products] = await db.execute(
+            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
+       FROM products
+       WHERE stock > 0 AND category_id = ?`,
+            [categoryId]
+        );
+
+        res.json(products);
+    } catch (error) {
+        console.error('❌ Помилка отримання товарів за категорією (query):', error);
+        res.status(500).json({ error: 'Не вдалося отримати товари за категорією' });
+    }
+});
+
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
         const [rows] = await db.execute(`
-      SELECT product_id, Name, Description, Price, Photo, Rating, Stock
+      SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
       FROM products
       WHERE product_id = ?
     `, [id]);
@@ -121,14 +197,18 @@ router.get('/:id', async (req, res) => {
 });
 
 // ➕ Додавання нового товару
-router.post('/', async (req, res) => {
-    const { name, description, price, photo, stock } = req.body;
+router.post('/', requireRole('admin'), async (req, res) => {
+    const { name, description, price, photo, stock, category_id } = req.body;
+
+    if (!Number.isInteger(Number(category_id)) || Number(category_id) <= 0) {
+        return res.status(400).json({ error: 'Потрібна категорія товару' });
+    }
 
     try {
         const [result] = await db.execute(
-            `INSERT INTO products (Name, Description, Price, Photo, Stock) 
-       VALUES (?, ?, ?, ?, ?)`,
-            [name, description, price, photo, stock]
+            `INSERT INTO products (Name, Description, Price, Photo, Stock, category_id) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+            [name, description, price, photo, stock, category_id]
         );
 
         res.status(201).json({
@@ -143,16 +223,20 @@ router.post('/', async (req, res) => {
 });
 
 // ✏️ Редагування товару
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireRole('admin'), async (req, res) => {
     const { id } = req.params;
-    const { name, description, price, photo, stock } = req.body;
+    const { name, description, price, photo, stock, category_id } = req.body;
+
+    if (!Number.isInteger(Number(category_id)) || Number(category_id) <= 0) {
+        return res.status(400).json({ error: 'Потрібна категорія товару' });
+    }
 
     try {
         const [result] = await db.execute(
             `UPDATE products 
-       SET Name = ?, Description = ?, Price = ?, Photo = ?, Stock = ?
+       SET Name = ?, Description = ?, Price = ?, Photo = ?, Stock = ?, category_id = ?
        WHERE product_id = ?`,
-            [name, description, price, photo, stock, id]
+            [name, description, price, photo, stock, category_id, id]
         );
 
         if (result.affectedRows === 0) {
@@ -167,7 +251,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // 🗑️ Видалення товару
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireRole('admin'), async (req, res) => {
     const { id } = req.params;
 
     try {
