@@ -47,9 +47,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 🔄 Автоматичне оновлення кошика
-  setInterval(loadCart, 3000);
-
   // 🔹 Завантажити кошик при старті
   await loadCart();
   // Якщо кошик порожній після першого load — приховаємо підсумок і кнопку
@@ -67,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const productId = btn.dataset.id;
 
     try {
-      await fetch(`http://localhost:5000/cart/${userId}/${productId}`, { method: "DELETE" });
+      await fetch(`${API_BASE}/cart/${userId}/${productId}`, { method: "DELETE" });
       const itemRow = btn.closest('.cart-item');
       if (itemRow) itemRow.remove();
       updateTotal();
@@ -84,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const newQty = parseInt(input.value);
 
     try {
-      const res = await fetch(`http://localhost:5000/cart/${userId}/${productId}`, {
+      const res = await fetch(`${API_BASE}/cart/${userId}/${productId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantity: newQty })
@@ -104,7 +101,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadCart() {
     try {
-      const res = await fetch(`http://localhost:5000/cart/${userId}?t=${Date.now()}`);
+      const res = await fetch(`${API_BASE}/cart/${userId}?t=${Date.now()}`);
       const items = await res.json();
 
       if (!Array.isArray(items) || items.length === 0 || items.empty) {
@@ -205,7 +202,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     checkoutBtn.disabled = true;
 
     try {
-      const res = await fetch("http://localhost:5000/orders/pay", {
+      const res = await fetch(`${API_BASE}/orders/pay`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

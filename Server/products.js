@@ -1,305 +1,182 @@
-//products.js
 import express from 'express';
 import { db } from './db.js';
 import { requireRole } from './auth.js';
 
 const router = express.Router();
 
+/* ===================== POPULAR ===================== */
 router.get('/popular', async (req, res) => {
-    try {
-        const [products] = await db.execute(`
+  try {
+    const [products] = await db.execute(`
       SELECT product_id, Name, Price, Photo, Rating
       FROM products
       WHERE Stock > 0
       ORDER BY Rating DESC
       LIMIT 8
     `);
-        res.json(products);
-    } catch (error) {
-        console.error('❌ Помилка отримання популярних товарів:', error);
-        res.status(500).json({ error: 'Не вдалося отримати товари' });
-    }
+
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load popular' });
+  }
 });
 
-// 🔍 Отримати всі товари, які є на складі, з пошуком
+/* ===================== GET ALL + SEARCH ===================== */
 router.get('/', async (req, res) => {
-    const { search } = req.query;
+  const { search } = req.query;
 
-    let query = `
-    SELECT 
-      product_id, 
-      Name, 
-      Description, 
-      Price, 
-      Photo, 
-      Rating, 
-      Stock 
-    FROM products 
-    WHERE stock > 0
+  let sql = `
+    SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
+    FROM products
+    WHERE Stock > 0
   `;
-    const params = [];
 
-    if (search) {
-        query += ' AND (LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR product_id = ?)';
-        const keyword = `%${search.toLowerCase()}%`;
-        params.push(keyword, keyword, search); // третій параметр — пряме порівняння з ID
-    }
+  const params = [];
 
-    try {
-        const [products] = await db.execute(query, params);
-        res.json(products);
-    } catch (error) {
-        console.error('❌ Помилка запиту до бази:', error);
-        res.status(500).json({ error: 'Помилка отримання товарів' });
-    }
+  if (search) {
+    sql += ` AND (
+      LOWER(Name) LIKE ? OR
+      LOWER(Description) LIKE ? OR
+      product_id = ?
+    )`;
+
+    const keyword = `%${search.toLowerCase()}%`;
+    params.push(keyword, keyword, search);
+  }
+
+  try {
+    const [rows] = await db.execute(sql, params);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Search failed' });
+  }
 });
 
-
+/* ===================== HINTS ===================== */
 router.get('/hints', async (req, res) => {
-    const { hint } = req.query;
+  const { hint } = req.query;
+  if (!hint) return res.json([]);
 
-    if (!hint || hint.trim().length < 1) {
-        return res.json([]);
-    }
+  const keyword = `%${hint.toLowerCase()}%`;
 
-    const keyword = `%${hint.toLowerCase()}%`;
-
-    try {
-        const [products] = await db.execute(
-            `SELECT product_id, Name 
-       FROM products 
-       WHERE stock > 0 
-       AND (LOWER(name) LIKE ? OR product_id LIKE ?) 
+  try {
+    const [rows] = await db.execute(
+      `SELECT product_id, Name
+       FROM products
+       WHERE Stock > 0
+       AND (LOWER(Name) LIKE ? OR product_id LIKE ?)
        LIMIT 10`,
-            [keyword, hint] // перший параметр для назви, другий — для ID
-        );
-        res.json(products);
-    } catch (error) {
-        console.error('❌ Помилка запиту до підказок:', error);
-        res.status(500).json({ error: 'Помилка отримання підказок' });
-    }
+      [keyword, hint]
+    );
+
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json([]);
+  }
 });
 
-router.get('/tag/:keyword', async (req, res) => {
-    const keyword = req.params.keyword.toLowerCase();
-
-    try {
-        const [products] = await db.execute(
-            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
-       FROM products 
-       WHERE stock > 0 AND (
-         LOWER(name) LIKE ? OR LOWER(description) LIKE ?
-       )`,
-            [`%${keyword}%`, `%${keyword}%`]
-        );
-
-        res.json(products);
-    } catch (error) {
-        console.error('❌ Помилка запиту по маркеру:', error);
-        res.status(500).json({ error: 'Не вдалося отримати товари' });
-    }
-});
-
+/* ===================== CATEGORIES ===================== */
 router.get('/categories', async (req, res) => {
-    try {
-        const [rows] = await db.execute(
-            `SELECT category_id, name_category FROM categories ORDER BY category_id`
-        );
-        res.json(rows);
-    } catch (error) {
-        console.error('❌ Помилка отримання категорій:', error);
-        res.status(500).json({ error: 'Не вдалося отримати категорії' });
-    }
+  try {
+    const [rows] = await db.execute(
+      `SELECT category_id, name_category FROM categories`
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json([]);
+  }
 });
 
+/* ===================== BY CATEGORY ===================== */
 router.get('/category/:id', async (req, res) => {
-    const categoryId = Number(req.params.id);
-    if (!Number.isInteger(categoryId) || categoryId <= 0) {
-        return res.status(400).json({ error: 'Некоректний category_id' });
-    }
+  const id = Number(req.params.id);
 
-    try {
-        const [products] = await db.execute(
-            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: 'Invalid category id' });
+  }
+
+  try {
+    const [rows] = await db.execute(
+      `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
        FROM products
-       WHERE stock > 0 AND category_id = ?`,
-            [categoryId]
-        );
+       WHERE Stock > 0 AND category_id = ?`,
+      [id]
+    );
 
-        res.json(products);
-    } catch (error) {
-        console.error('❌ Помилка отримання товарів за категорією:', error);
-        res.status(500).json({ error: 'Не вдалося отримати товари за категорією' });
-    }
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json([]);
+  }
 });
 
-router.get('/category_id/:id', async (req, res) => {
-    const categoryId = Number(req.params.id);
-    if (!Number.isInteger(categoryId) || categoryId <= 0) {
-        return res.status(400).json({ error: 'Некоректний category_id' });
-    }
-
-    try {
-        const [products] = await db.execute(
-            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
-       FROM products
-       WHERE stock > 0 AND category_id = ?`,
-            [categoryId]
-        );
-
-        res.json(products);
-    } catch (error) {
-        console.error('❌ Помилка отримання товарів за категорією (alias):', error);
-        res.status(500).json({ error: 'Не вдалося отримати товари за категорією' });
-    }
-});
-
-router.get('/category', async (req, res) => {
-    const categoryId = Number(req.query.id);
-    if (!Number.isInteger(categoryId) || categoryId <= 0) {
-        return res.status(400).json({ error: 'Некоректний category_id' });
-    }
-
-    try {
-        const [products] = await db.execute(
-            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
-       FROM products
-       WHERE stock > 0 AND category_id = ?`,
-            [categoryId]
-        );
-
-        res.json(products);
-    } catch (error) {
-        console.error('❌ Помилка отримання товарів за категорією (query):', error);
-        res.status(500).json({ error: 'Не вдалося отримати товари за категорією' });
-    }
-});
-
+/* ===================== SINGLE PRODUCT ===================== */
 router.get('/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const [rows] = await db.execute(`
-      SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
-      FROM products
-      WHERE product_id = ?
-    `, [id]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({ error: 'Товар не знайдено' });
-        }
-
-        res.json(rows[0]);
-    } catch (error) {
-        console.error('❌ Помилка отримання товару:', error);
-        res.status(500).json({ error: 'Не вдалося отримати товар' });
-    }
-});
-
-// ➕ Додавання нового товару
-router.post('/', requireRole('admin'), async (req, res) => {
-    const { name, description, price, photo, stock, category_id } = req.body;
-
-    if (!Number.isInteger(Number(category_id)) || Number(category_id) <= 0) {
-        return res.status(400).json({ error: 'Потрібна категорія товару' });
-    }
-
-    try {
-        const [result] = await db.execute(
-            `INSERT INTO products (Name, Description, Price, Photo, Stock, category_id) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-            [name, description, price, photo, stock, category_id]
-        );
-
-        res.status(201).json({
-            message: 'Товар успішно додано',
-            product_id: result.insertId,
-            product: { id: result.insertId, name, description, price, photo, stock }
-        });
-    } catch (error) {
-        console.error('❌ Помилка додавання товару:', error);
-        res.status(500).json({ error: 'Не вдалося додати товар' });
-    }
-});
-
-// ✏️ Редагування товару
-router.put('/:id', requireRole('admin'), async (req, res) => {
-    const { id } = req.params;
-    const { name, description, price, photo, stock, category_id } = req.body;
-
-    if (!Number.isInteger(Number(category_id)) || Number(category_id) <= 0) {
-        return res.status(400).json({ error: 'Потрібна категорія товару' });
-    }
-
-    try {
-        const [result] = await db.execute(
-            `UPDATE products 
-       SET Name = ?, Description = ?, Price = ?, Photo = ?, Stock = ?, category_id = ?
+  try {
+    const [rows] = await db.execute(
+      `SELECT product_id, Name, Description, Price, Photo, Rating, Stock, category_id
+       FROM products
        WHERE product_id = ?`,
-            [name, description, price, photo, stock, category_id, id]
-        );
+      [req.params.id]
+    );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Товар не знайдено' });
-        }
+    if (!rows.length) return res.status(404).json({ error: 'Not found' });
 
-        res.json({ message: 'Товар успішно змінено' });
-    } catch (error) {
-        console.error('❌ Помилка редагування товару:', error);
-        res.status(500).json({ error: 'Не вдалося змінити товар' });
-    }
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: 'Error' });
+  }
 });
 
-// 🗑️ Видалення товару
+/* ===================== CREATE PRODUCT (ADMIN) ===================== */
+router.post('/', requireRole('admin'), async (req, res) => {
+  const { name, description, price, photo, stock, category_id } = req.body;
+
+  try {
+    const [result] = await db.execute(
+      `INSERT INTO products (Name, Description, Price, Photo, Stock, category_id)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, description, price, photo, stock, category_id]
+    );
+
+    res.status(201).json({
+      product_id: result.insertId,
+      message: 'Created'
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Insert failed' });
+  }
+});
+
+/* ===================== UPDATE PRODUCT ===================== */
+router.put('/:id', requireRole('admin'), async (req, res) => {
+  const { name, description, price, photo, stock, category_id } = req.body;
+
+  try {
+    await db.execute(
+      `UPDATE products
+       SET Name=?, Description=?, Price=?, Photo=?, Stock=?, category_id=?
+       WHERE product_id=?`,
+      [name, description, price, photo, stock, category_id, req.params.id]
+    );
+
+    res.json({ message: 'Updated' });
+  } catch (err) {
+    res.status(500).json({ error: 'Update failed' });
+  }
+});
+
+/* ===================== DELETE ===================== */
 router.delete('/:id', requireRole('admin'), async (req, res) => {
-    const { id } = req.params;
+  try {
+    await db.execute(
+      `DELETE FROM products WHERE product_id=?`,
+      [req.params.id]
+    );
 
-    try {
-        const [result] = await db.execute(
-            `DELETE FROM products WHERE product_id = ?`,
-            [id]
-        );
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Товар не знайдено' });
-        }
-
-        res.json({ message: 'Товар успішно видалено' });
-    } catch (error) {
-        console.error('❌ Помилка видалення товару:', error);
-        res.status(500).json({ error: 'Не вдалося видалити товар' });
-    }
+    res.json({ message: 'Deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Delete failed' });
+  }
 });
 
-// Сортування за ціною зростання
-router.get('/sort/asc', async (req, res) => {
-    try {
-        // використовуємо ту ж таблицю, що й інші запити
-        const [rows] = await db.execute(
-            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock
-             FROM products
-             WHERE stock > 0
-             ORDER BY Price ASC`
-        );
-        res.json(rows);
-    } catch (err) {
-        console.error('❌ Помилка сортування:', err);
-        res.status(500).json({ error: 'Не вдалося отримати товари' });
-    }
-});
-// Сортування за ціною спадання
-router.get('/sort/desc', async (req, res) => {
-    try {
-        const [rows] = await db.execute(
-            `SELECT product_id, Name, Description, Price, Photo, Rating, Stock
-             FROM products
-             WHERE stock > 0
-             ORDER BY Price DESC`
-        );
-        res.json(rows);
-    } catch (err) {
-        console.error('❌ Помилка сортування:', err);
-        res.status(500).json({ error: 'Не вдалося отримати товари' });
-    }
-});
 export default router;
