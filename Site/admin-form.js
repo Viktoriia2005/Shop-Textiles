@@ -148,12 +148,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     try {
+      const adminId = localStorage.getItem("adminId"); // 🔑 беремо ID адміна
       let res;
+
       if (productId) {
         // PUT для редагування
         res = await fetch(`${API_BASE}/products/${productId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": adminId   // 👈 додаємо user_id
+          },
           body: JSON.stringify(productData),
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -162,13 +167,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         // POST для додавання
         res = await fetch(`${API_BASE}/products`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-user-id": adminId   // 👈 додаємо user_id
+          },
           body: JSON.stringify(productData),
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         showFlashMessage("Товар успішно додано!");
       }
-      // почекаємо трохи аби користувач побачив повідомлення
+
       setTimeout(() => { window.location.href = "admin.html"; }, 1600);
     } catch (err) {
       console.error("Помилка збереження товару:", err);

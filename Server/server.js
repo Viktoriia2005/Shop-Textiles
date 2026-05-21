@@ -1,4 +1,4 @@
-//server.js
+// server.js
 import express from 'express';
 import cors from 'cors';
 import { db } from './db.js';
@@ -8,11 +8,17 @@ import cartRouter from './cart.js';
 import ordersRouter from './orders.js';
 import favouritesRouter from './favourites.js';
 
-
-
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: '*' }));
+
+// ✅ Правильна конфігурація CORS
+app.use(cors({
+    origin: "http://localhost:5500", // твій фронтенд
+    methods: ["GET", "POST", "PUT", "DELETE"], // 👈 явно дозволяємо методи
+    allowedHeaders: ["Content-Type", "x-user-id"] // 👈 дозволяємо кастомний заголовок
+}));
+
+// Логування запитів
 app.use((req, res, next) => {
     console.log(`➡️ ${req.method} ${req.url}`);
     next();

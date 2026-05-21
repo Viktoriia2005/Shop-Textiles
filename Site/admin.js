@@ -135,7 +135,16 @@ document.addEventListener("DOMContentLoaded", () => {
   confirmDeleteBtn.addEventListener("click", async () => {
     if (productIdToDelete) {
       try {
-        await fetch(`${API_BASE}/products/${productIdToDelete}`, { method: "DELETE" });
+        const adminId = localStorage.getItem("adminId"); // 🔑 беремо ID адміна
+        const res = await fetch(`${API_BASE}/products/${productIdToDelete}`, {
+          method: "DELETE",
+          headers: {
+            "x-user-id": adminId   // 👈 додаємо user_id
+          }
+        });
+
+        if (!res.ok) throw new Error("HTTP " + res.status);
+
         showFlashMessage("Товар видалено!");
         // закриваємо модал після успіху
         const modalInstance = bootstrap.Modal.getInstance(document.getElementById("deleteModal"));
