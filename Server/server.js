@@ -13,7 +13,7 @@ app.use(express.json());
 
 // ✅ Правильна конфігурація CORS
 app.use(cors({
-    origin: "http://localhost:5500", // твій фронтенд
+    origin: "*", // твій фронтенд
     methods: ["GET", "POST", "PUT", "DELETE"], // 👈 явно дозволяємо методи
     allowedHeaders: ["Content-Type", "x-user-id"] // 👈 дозволяємо кастомний заголовок
 }));
