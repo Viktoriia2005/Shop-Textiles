@@ -39,6 +39,8 @@ for (const key in categoryMap) {
   }
 }
 
+const shouldRestoreProductsOnClear = Boolean(categoryId);
+
 if (!searchInput || !feedback || !results) {
   console.warn('searchForm.js: пошукові елементи не знайдені на сторінці — пропускаємо ініціалізацію');
 } else {
@@ -103,19 +105,29 @@ if (!searchInput || !feedback || !results) {
 
     if (hint.length < 1) {
       if (hintsBox) hintsBox.innerHTML = "";
+      if (results) results.innerHTML = "";
       if (feedback) feedback.innerHTML = "";
 
-      // 🔄 показуємо товари категорії замість очищення
+      if (!shouldRestoreProductsOnClear) {
+        return;
+      }
+
+      const restoreEvent = new CustomEvent("catalog:restore-after-clear", {
+        cancelable: true,
+        detail: { categoryId }
+      });
+
+      const shouldUseDefaultRestore = window.dispatchEvent(restoreEvent);
+      if (!shouldUseDefaultRestore) {
+        return;
+      }
+
+      // 🔄 на сторінках категорій повертаємо товари категорії після очищення пошуку
       try {
-        let url = `${PRODUCTS_BASE}`;
-        if (categoryId) {
-          url = `${PRODUCTS_BASE}/category/${categoryId}`;
-        }
-        const res = await fetch(url);
+        const res = await fetch(`${PRODUCTS_BASE}/category/${categoryId}`);
         if (!res.ok) throw new Error(`Сервер повернув статус: ${res.status}`);
         const products = await res.json();
 
-        results.innerHTML = "";
         renderProducts(products);
       } catch (err) {
         console.error("❌ Помилка завантаження категорії:", err);

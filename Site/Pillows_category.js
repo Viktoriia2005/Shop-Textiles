@@ -231,6 +231,16 @@
     renderPagination(products.length, page);
   };
 
+  window.addEventListener("catalog:restore-after-clear", (event) => {
+    if (event.detail?.categoryId !== 2) {
+      return;
+    }
+
+    event.preventDefault();
+    currentPage = 1;
+    renderProducts(currentProducts, currentPage);
+  });
+
   const renderPagination = (totalItems, page) => {
     const totalPages = Math.ceil(totalItems / limit);
     paginationWrapper.innerHTML = "";
