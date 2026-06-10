@@ -232,6 +232,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (paymentOk) {
           cartContainer.innerHTML = "";
           totalDisplay.forEach(el => el.textContent = "0 грн");
+          window.refreshCartCount?.();
         }
 
         const paymentMessage = paymentOk

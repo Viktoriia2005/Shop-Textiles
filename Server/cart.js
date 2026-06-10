@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post('/quick-add', async (req, res) => {
   const { user_id, product_id } = req.body;
+  const quantity = Math.max(1, parseInt(req.body.quantity, 10) || 1);
 
   if (!user_id || !product_id) {
     return res.status(400).json({ error: 'Вкажіть user_id та product_id' });
@@ -17,7 +18,7 @@ router.post('/quick-add', async (req, res) => {
       [product_id]
     );
 
-    if (!product || product.stock < 1) {
+    if (!product || product.stock < quantity) {
       return res.status(400).json({ error: 'Товару немає на складі' });
     }
 
@@ -27,14 +28,18 @@ router.post('/quick-add', async (req, res) => {
     );
 
     if (existingItem) {
+      if (existingItem.quantity + quantity > product.stock) {
+        return res.status(400).json({ error: 'Недостатньо товару на складі' });
+      }
+
       await db.execute(
-        'UPDATE cart_items SET quantity = quantity + 1 WHERE user_id = ? AND product_id = ?',
-        [user_id, product_id]
+        'UPDATE cart_items SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?',
+        [quantity, user_id, product_id]
       );
     } else {
       await db.execute(
-        'INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, 1)',
-        [user_id, product_id]
+        'INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?)',
+        [user_id, product_id, quantity]
       );
     }
 
