@@ -42,14 +42,14 @@ async function refreshOrderStatuses() {
   await db.execute(
     `UPDATE orders
      SET Status = CASE
-        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 20 THEN 'Доставлено'
-        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 15 THEN 'Замовлення очікує вас'
-        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 10 THEN 'Замовлення прямує до вас'
-        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 5 THEN 'Ваше замовлення чекає перевізника'
+        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 8 THEN 'Доставлено'
+        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 6 THEN 'Замовлення очікує вас'
+        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 4 THEN 'Замовлення прямує до вас'
+        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 2 THEN 'Ваше замовлення чекає перевізника'
         ELSE 'Очікування'
      END,
      delivered_at = CASE
-        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 20
+        WHEN TIMESTAMPDIFF(MINUTE, order_date, NOW()) >= 8
          AND (delivered_at IS NULL OR delivered_at = '0000-00-00 00:00:00')
          THEN NOW()
         ELSE delivered_at

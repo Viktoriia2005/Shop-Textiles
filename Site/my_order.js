@@ -6,7 +6,7 @@
   { key: 'Доставлено', icon: '✅', label: 'Доставлено' }
 ];
 
-const STEP_MINUTES = 4; // 5 статусів * 4 хв = ~20 хв
+const STEP_MINUTES = 2; // 5 статусів * 2 хв = ~10 хв
 
 function statusToIndex(status) {
   const normalized = String(status || '').toLowerCase().trim();
